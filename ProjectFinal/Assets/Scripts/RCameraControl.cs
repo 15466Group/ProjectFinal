@@ -24,6 +24,12 @@ public class RCameraControl : MonoBehaviour {
 	private float FOV;
 
 	private AudioSource gunShot;
+	private AudioSource reloadSound;
+	private int ammo;
+	private bool reloading;
+	private int fullClipSize;
+	private int clipSize;
+	private int reserveSize;
 
 	public Texture tex;
 
@@ -35,9 +41,15 @@ public class RCameraControl : MonoBehaviour {
 		rotationY = 0.0f;
 		rotationX = 0.0f;
 		FOV = 90.0f;
-		gunShot = this.GetComponent<AudioSource> ();
+		gunShot = this.GetComponents<AudioSource> ()[0];
+		reloadSound = this.GetComponents<AudioSource> () [1];
 		wantedMode = CursorLockMode.Locked;
 		sensitivityM = sensitivityMDefault;
+		fullClipSize = 5;
+		clipSize = fullClipSize;
+		ammo = 20;
+		reserveSize = ammo - clipSize;
+		reloading = false;
 	}
 
 	
@@ -56,7 +68,8 @@ public class RCameraControl : MonoBehaviour {
 		sensitivityM = Mathf.Clamp (FOV, 1f/8f * sensitivityMDefault, sensitivityMDefault);
 		Camera.main.fieldOfView = FOV;
 
-		if (Input.GetMouseButtonDown (0) && !gunShot.isPlaying) {
+		//FIRE
+		if (Input.GetMouseButtonDown (0) && !gunShot.isPlaying && clipSize > 0 && !reloadSound.isPlaying) {
 			RaycastHit hit;
 			if (Physics.Raycast (transform.position, transform.forward, out hit)) {
 				if(hit.collider.tag == "Soldier") {
@@ -66,6 +79,23 @@ public class RCameraControl : MonoBehaviour {
 				}
 			}
 			gunShot.Play ();
+			clipSize -= 1;
+			ammo -= 1;
+		}
+
+		//RELOAD
+		if (Input.GetMouseButtonDown (1) && clipSize < fullClipSize && reserveSize > 0 && !gunShot.isPlaying && !reloading) {
+			reloading = true;
+			reloadSound.Play ();
+		}
+
+		if (reloading) {
+			if (!reloadSound.isPlaying){
+				Debug.Log ("sound not playing");
+				clipSize = Mathf.Min(reserveSize, fullClipSize);
+				reserveSize = ammo - clipSize;
+				reloading = false;
+			}
 		}
 
 		if (Input.GetKeyDown (KeyCode.R))
@@ -142,6 +172,22 @@ public class RCameraControl : MonoBehaviour {
 		GUILayout.EndVertical ();
 		
 		SetCursorState ();
+
+		showAmmoCount ();
+
+	}
+
+	void showAmmoCount(){
+		int w = Screen.width, h = Screen.height;
+		
+		GUIStyle style = new GUIStyle();
+		
+		Rect rect = new Rect(0, 0, w, h);
+		style.alignment = TextAnchor.LowerRight;
+		style.fontSize = h * 5 / 100;
+		style.normal.textColor = Color.white;
+		string text = clipSize.ToString() + "/" + reserveSize.ToString();
+		GUI.Label(rect, text, style);
 	}
 
 	void OnDrawGizmos() {
