@@ -14,7 +14,7 @@ function Start(){
 	bulletCaseGeneratorScript = bulletCaseGenerator.GetComponent("bulletCaseGenerator");
 	bulletTraceGeneratorScript = bulletTraceGenerator.GetComponent("bulletTraceGenerator");
 	muzzleFlashGeneratorScript = muzzleFlashGenerator.GetComponent("muzzleFlashGenerator");
-	firing = false;
+//	firing = false;
 	//accuracy = 0.9;
 }
 
@@ -23,7 +23,7 @@ function Update () {
 	bulletTraceGeneratorScript.on = firing;
 	muzzleFlashGeneratorScript.on = firing;
 	bulletTraceGeneratorScript.accuracy = accuracy;
-	firing = false;
+//	firing = false;
 }
 
 function Fire(){

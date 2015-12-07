@@ -10,6 +10,7 @@ function Update () {
 		if(Time.time > nextMuzzleFlashTime){
 			nextMuzzleFlashTime = Time.time + (1.0 / rate);
 			var newMuzzleFlash : GameObject = Instantiate(muzzleFlashPrefab,transform.position,transform.rotation);
+			newMuzzleFlash.transform.localScale = Vector3(5,5,5);
 			var materialId : int = Mathf.RoundToInt(Random.Range(0,materials.Length));
 			newMuzzleFlash.GetComponent.<Renderer>().material = materials[materialId];
 			newMuzzleFlash.transform.parent = transform;

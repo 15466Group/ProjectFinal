@@ -7,6 +7,7 @@ public class GoalControl : MonoBehaviour {
 	public string walking;
 	public string running;
 	public string dying;
+	public float colliderScalar;
 
 	private Animation anim;
 	private float smooth;
@@ -85,11 +86,11 @@ public class GoalControl : MonoBehaviour {
 
 	void OnDrawGizmos(){
 		Gizmos.color = Color.magenta;
-		Gizmos.DrawSphere (transform.position + (transform.up * transform.localScale.y*1.3f), radius);
+		Gizmos.DrawSphere (transform.position + (transform.up * transform.localScale.y*colliderScalar), radius);
 	}
 
 	bool checkCollisions(){
-		Collider[] hits = Physics.OverlapSphere (transform.position + (transform.up * transform.localScale.y*1.3f), radius, obstacleLayer | soldierLayer);
+		Collider[] hits = Physics.OverlapSphere (transform.position + (transform.up * transform.localScale.y*colliderScalar), radius, obstacleLayer | soldierLayer);
 		if (hits.Length > 0) {
 			transform.position = previousValidPos;
 			return false;

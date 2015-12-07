@@ -13,6 +13,7 @@ function Update () {
 			rate = Mathf.Max(rate, 1.0);
 			nextbulletTraceTime = Time.time + (1.0 / rate);
 			var newBulletTrace : GameObject = Instantiate(bulletTracePrefab,transform.position,transform.rotation);
+			newBulletTrace.transform.localScale = Vector3(10, 10, 10);
 			var bulletVelocity : Vector3 = newBulletTrace.GetComponent("bulletTrace").velocity;
 			var badAim : float = (1-accuracy);
 			badAim *= newBulletTrace.GetComponent("bulletTrace").bulletSpeed * 0.05;
