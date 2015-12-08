@@ -91,7 +91,6 @@ public class RCameraControl : MonoBehaviour {
 
 		if (reloading) {
 			if (!reloadSound.isPlaying){
-				Debug.Log ("sound not playing");
 				clipSize = Mathf.Min(reserveSize, fullClipSize);
 				reserveSize = ammo - clipSize;
 				reloading = false;
@@ -175,6 +174,27 @@ public class RCameraControl : MonoBehaviour {
 
 		showAmmoCount ();
 
+		showReloadHelper ();
+
+	}
+
+	void showReloadHelper(){
+		string text;
+		if (clipSize == 0){
+			if (ammo > 0)
+				text = "Right Click to Reload!";
+			else
+				text = "Out of Ammo!";
+			int w = Screen.width, h = Screen.height;
+			
+			GUIStyle style = new GUIStyle();
+			
+			Rect rect = new Rect(0, 0, w, h);
+			style.alignment = TextAnchor.UpperRight;
+			style.fontSize = h * 5 / 100;
+			style.normal.textColor = Color.red;
+			GUI.Label(rect, text, style);
+		}
 	}
 
 	void showAmmoCount(){

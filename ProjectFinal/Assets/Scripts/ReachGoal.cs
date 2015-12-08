@@ -112,6 +112,8 @@ public class ReachGoal: NPCBehaviour {
 
 	public void updateGridSniperPos(){
 		state.sGrid.sniperPosKnown = true;
+		//fixme
+//		state.sGrid.updateGrid (goalPos);
 	}
 
 	public Node[,] returnGrid(){

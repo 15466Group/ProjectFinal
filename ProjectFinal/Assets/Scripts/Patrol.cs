@@ -13,6 +13,10 @@ public class Patrol : NPCBehaviour {
 		speedMaxDefault = 10.0f;
 		accMag = 50.0f;
 		seconds = 0.0f;
+		rayDistDefault = 12.0f;
+		rayDist = rayDistDefault;
+		closeRayDistDefault = 5.0f;
+		closeRayDist = closeRayDistDefault;
 		direction = new Vector3 (direction.x, 0.0f, direction.z).normalized * 200.0f;
 	}
 	

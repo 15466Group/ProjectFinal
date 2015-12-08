@@ -60,12 +60,13 @@ public class MasterBehaviour : MonoBehaviour {
 
 	private bool fixedDeadCollider;
 
-	private AudioSource gunShot;
+
+	public AudioSource gunShot;
+	public AudioSource alert;
 	// Use this for initialization
 	public void Starta (GameObject plane, float nodeSize, Vector3 sP) {
 
 		fixedDeadCollider = false;
-
 		poi = Vector3.zero;
 		health = 100.0f;
 		seesPlayer = false;
@@ -100,14 +101,12 @@ public class MasterBehaviour : MonoBehaviour {
 		wander.Starta ();
 		patrol.Starta ();
 		standstill.Starta ();
-		takeCover = new TakeCover (reachGoal.state.sGrid.hiddenSpaceCost, 
+		takeCover = new TakeCover (reachGoal.state.sGrid.hiddenSpaceCost, reachGoal.state.sGrid.initSpaceCost,
 		                           reachGoal.state.sGrid.grid, reachGoal.state.sGrid.spaceCostScalars);
 
 		anim = GetComponent<Animation> ();
 		anim.CrossFade (idle);
 		walkingSpeed = 10.0f;
-		gunShot = this.GetComponents<AudioSource> ()[0];
-
 		lr = this.GetComponentInParent<LineRenderer> ();
 		seenTime = 0f;
 		alertLevel = 0;
@@ -217,6 +216,8 @@ public class MasterBehaviour : MonoBehaviour {
 		if (damage >= 3) {
 			isDead = true;
 			addToDeadSet = true;
+			Transform l = transform.Find("Spotlight");
+			l.gameObject.SetActive(false);
 			anim.CrossFade (dying);
 			//need to make a noise when dying
 		}
@@ -267,7 +268,8 @@ public class MasterBehaviour : MonoBehaviour {
 		sniperPosKnown = true;
 //		reachGoal.state.sGrid.sniperPosKnown = true;
 		reachGoal.updateGridSniperPos ();
-//		Debug.Log ("knows sniper pos");
+		takeCover.sniperPosKnown = true;
+		Debug.Log ("knows sniper pos");
 //		Debug.Break ();
 	}
 

@@ -181,12 +181,12 @@ public class MasterScheduler : MonoBehaviour {
 		RaycastHit hit;
 		Debug.DrawRay (currChar.transform.position, (Mathf.Sqrt (3) * currChar.transform.forward + currChar.transform.right).normalized * sightDist, Color.red);
 		Debug.DrawRay (currChar.transform.position, (Mathf.Sqrt (3) * currChar.transform.forward - currChar.transform.right).normalized * sightDist, Color.red);
-		Debug.DrawLine (currChar.transform.position, player.transform.position, Color.black);
+//		Debug.DrawLine (currChar.transform.position, player.transform.position, Color.black);
 		if (Physics.Raycast (currChar.transform.position, player.transform.position - currChar.transform.position, out hit, sightDist)) {
 			float angle = Vector3.Angle (currChar.transform.forward, player.transform.position - currChar.transform.position);
 			if ((hit.collider.gameObject == player) && (angle <= playerAngle)) {
-				if (!mb.seesPlayer) {
-					currChar.GetComponents <AudioSource> () [1].Play ();
+				if (!mb.seesPlayer && !mb.isGoingToSeenPlayerPos) {
+					mb.alert.Play (); //alert is first
 				}
 				mb.lastSeen = player.transform.position;
 				mb.lastSeenForward = player.transform.forward;

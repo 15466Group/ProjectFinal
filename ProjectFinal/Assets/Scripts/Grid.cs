@@ -25,9 +25,9 @@ public class Grid{
 	private Vector3 sniperPos;
 	public bool sniperPosKnown { get; set; }
 	public float[,] spaceCostScalars { get; set; }
-
-	private float initSpaceCost;
+	
 	private float overlapRadius;
+	public float initSpaceCost { get; set; }
 	public float hiddenSpaceCost { get; set; }
 
 	public Grid (GameObject p, Vector3 goalp, float nS, Vector3 sP) {
@@ -79,13 +79,13 @@ public class Grid{
 				//float scalar = hiddenSpaceCost;
 				float scalar = initSpaceCost;
 				float charHeight = 5.0f;
-				Vector3 nodeCenter = new Vector3(xp, charHeight, zp);
+				Vector3 nodeCenter = new Vector3(xp, charHeight * 1.5f, zp);
 
 				Collider[] hits = Physics.OverlapSphere(nodeCenter, nodeSize/2.0f, obstacleLayer | deadLayer | dynamicLayer);
 				int len = hits.Length;
 				//cant see the sniper from this node, so vice versa
-				Vector3 nodeRight = nodeCenter + Vector3.right * nodeSize/2f;
-				Vector3 nodeLeft = nodeCenter - Vector3.right * nodeSize/2f;
+				Vector3 nodeRight = nodeCenter + Vector3.right * nodeSize;
+				Vector3 nodeLeft = nodeCenter - Vector3.right * nodeSize;
 				float camDist = 30.0f;
 				if (Physics.Raycast(nodeRight, sniperPos - nodeRight, out hitR, camDist, obstacleLayer) && 
 				    Physics.Raycast(nodeLeft, sniperPos - nodeLeft, out hitL, camDist, obstacleLayer)){

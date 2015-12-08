@@ -28,7 +28,6 @@ public class Graph : Object {
 
 	//want to reuse old searches if they have not seen the endNode after short circuiting the search
 	public State getPath(State s) {
-
 		//search less nodes as the dictpath gets large, initially search 100 nodes at a time
 		totalNodesToSearch = 100;
 //		int dictlen = s.dictPath.Count;
@@ -63,7 +62,21 @@ public class Graph : Object {
 				estimEndNode = current;
 			}
 			if (numNodesSeen >= totalNodesToSearch){
+				//extend search for later if not chasing player
 				//do not keep using this search because endNode is not free
+//				if (goingToPlayer){
+//					s.path = makePath (s.dictPath, estimEndNode);
+//					s.open = new List<Node> ();
+//					s.closed = new List<Node> ();
+//					s.startNode = null;
+//					s.endNode = null;
+//					s.ongoing = false;
+//					s.dictPath = new Dictionary<Node, Node> ();
+//				} else {
+//					s.ongoing = true;
+//					if (!s.hasFullPath)
+//						s.path = makePath(s.dictPath, estimEndNode);
+//				}
 //				if (!s.endNode.free){
 				s.path = makePath (s.dictPath, estimEndNode);
 				s.open = new List<Node> ();

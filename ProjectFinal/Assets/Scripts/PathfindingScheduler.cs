@@ -18,8 +18,8 @@ public class PathfindingScheduler {
 		//	char i is moving according to new graph and everyone else is moving according to their 'current' graphs
 		if (currCharNode != null && characters != null){
 			GameObject currChar = currCharNode.Value;
-
-			ReachGoal reachGoal = currChar.GetComponent<MasterBehaviour> ().reachGoal;
+			MasterBehaviour mb = currChar.GetComponent<MasterBehaviour>();
+			ReachGoal reachGoal = mb.reachGoal;
 			Vector3 start = currChar.transform.position;
 			Vector3 end = reachGoal.goalPos;
 //			Debug.Log ("End: " + reachGoal.goalPos);
