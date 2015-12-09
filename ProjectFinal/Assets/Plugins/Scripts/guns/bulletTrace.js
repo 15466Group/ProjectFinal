@@ -37,6 +37,10 @@ function Update () {
 				var player = hit.collider.gameObject.GetComponent("GoalControl");
 				player.SendMessage("getHit");
 			}
+			if(hit.collider.gameObject.tag == "Soldier") {
+				var soldier = hit.collider.gameObject.GetComponent("MasterBehaviour");
+				soldier.SendMessage("getHit", 1);
+			}
 			Destroy(gameObject);
 			var makeDust : boolean = true;
 			var makeHole : boolean = true;

@@ -103,6 +103,15 @@ public class RCameraControl : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.R))
 			Application.LoadLevel(Application.loadedLevel);
 
+		if (Input.GetKeyDown (KeyCode.P)) {
+			if(Time.timeScale != 0f) {
+				Time.timeScale = 0f;
+			}
+			else {
+				Time.timeScale = 1f;
+			}
+		}
+
 	}
 
 	

@@ -6,7 +6,7 @@ public class MasterBehaviour : MonoBehaviour {
 
 	private Animation anim;
 	public Vector3 poi { get; set; }  //point of interest that he reaches goal on
-	public float health { get; set; }
+	public int health { get; set; }
 	public bool seesPlayer { get; set; }
 	public Vector3 lastSeen { get; set; }
 	public Vector3 lastSeenForward { get; set; }
@@ -73,7 +73,7 @@ public class MasterBehaviour : MonoBehaviour {
 
 		fixedDeadCollider = false;
 		poi = Vector3.zero;
-		health = 100.0f;
+		health = 3;
 		seesPlayer = false;
 		lastSeen = Vector3.zero;
 		lastSeenForward = Vector3.zero;
@@ -240,7 +240,8 @@ public class MasterBehaviour : MonoBehaviour {
 		if (isDead) {
 			return;
 		}
-		if (damage >= 3) {
+		health -= damage;
+		if (health <= 0) {
 			isDead = true;
 			addToDeadSet = true;
 			Transform l = transform.Find("Spotlight");
@@ -248,6 +249,7 @@ public class MasterBehaviour : MonoBehaviour {
 			anim.CrossFade (dying);
 			//need to make a noise when dying
 		}
+		Debug.Log ("hit for " + damage);
 	}
 
 	public void shoot () {
