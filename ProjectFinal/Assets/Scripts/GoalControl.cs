@@ -11,7 +11,7 @@ public class GoalControl : MonoBehaviour {
 
 	private Animation anim;
 	private float smooth;
-	private float scaler;
+	private float maxSpeed;
 	private Vector3 velocity;
 	private float walkingSpeed;
 
@@ -21,14 +21,24 @@ public class GoalControl : MonoBehaviour {
 	private int soldierLayer;
 	private int health;
 
+	private float noiseRadius;
+	public AudioSource noise;
+	public GameObject noiseSphere;
+	private GameObject clonedNoiseSphere;
+	private Material mat;
+	private bool fading;
+	private float startAlpha;
+
 	public bool isDead { get; set; } 
 	private Texture2D healthTex;
 	
 	void Start()
 	{
+		noiseRadius = noiseSphere.transform.lossyScale.x / 2f;
+		startAlpha = 55f;
 		radius = 2.0f;
 		smooth = 5.0f;
-		scaler = 20.0f;
+		maxSpeed = 20.0f;
 		walkingSpeed = 5.0f;
 		velocity = Vector3.zero;
 		anim = GetComponent<Animation> ();
@@ -41,15 +51,18 @@ public class GoalControl : MonoBehaviour {
 		healthTex.SetPixel(0,0,Color.green);
 		healthTex.Apply();
 	}
+
 	void Update()
 	{
 		if (isDead)
-			return;
+			return; // do end scene
 		float moveHorizontal = Input.GetAxis ("Horizontal");
 		float moveVertical = Input.GetAxis ("Vertical");
-		
+
 		velocity = new Vector3 (moveHorizontal, 0.0f, moveVertical);
-		velocity = velocity * scaler;
+		velocity = velocity * maxSpeed;
+		velocity = velocity.normalized * (Mathf.Min (velocity.magnitude, maxSpeed));
+
 		Vector3 targetPosition = transform.position + velocity * Time.deltaTime;
 		if (velocity != new Vector3())
 			RotateTo (targetPosition);
@@ -57,10 +70,37 @@ public class GoalControl : MonoBehaviour {
 			previousValidPos = transform.position;
 			transform.position += velocity * Time.deltaTime;
 		}
+
+
+		checkForMakingSound ();
+
 		doAnimation ();
 		
 	}
 
+	//player can make noise to try and attract those nearby her
+	void checkForMakingSound(){
+		//spawn sphere for length of audio component
+		if (Input.GetKeyDown (KeyCode.Q) && !noise.isPlaying) {
+			noise.Play();
+			clonedNoiseSphere = (GameObject)Instantiate(noiseSphere, transform.position, Quaternion.identity);
+			mat = clonedNoiseSphere.GetComponent<MeshRenderer>().material;
+			mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, startAlpha/255f);
+			Destroy(clonedNoiseSphere, noise.clip.length);
+			Collider[] hits = Physics.OverlapSphere(transform.position, noiseRadius, soldierLayer);
+			foreach (Collider soldier in hits){
+				soldier.GetComponent<MasterBehaviour>().hearsSomething = true;
+			}
+		}
+		if (noise.isPlaying) {
+			float targetAlpha = 0f;
+			float ratio = Time.deltaTime / noise.clip.length;
+			float a = (startAlpha - targetAlpha) * ratio;
+			mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, mat.color.a - a/255f);
+		}
+	}
+
+	//check for crouching
 	void doAnimation(){
 		float mag = velocity.magnitude;
 		if (mag > 0.0f && mag <= walkingSpeed) {
@@ -85,8 +125,9 @@ public class GoalControl : MonoBehaviour {
 	}
 
 	void OnDrawGizmos(){
-		Gizmos.color = Color.magenta;
+		Gizmos.color = Color.magenta / 3f;
 		Gizmos.DrawSphere (transform.position + (transform.up * transform.localScale.y*colliderScalar), radius);
+		Gizmos.DrawSphere (transform.position, noiseRadius);
 	}
 
 	bool checkCollisions(){
@@ -108,6 +149,7 @@ public class GoalControl : MonoBehaviour {
 	void die() {
 		isDead = true;
 		anim.CrossFade (dying);
+		//end game
 	}
 
 	void OnGUI () {
