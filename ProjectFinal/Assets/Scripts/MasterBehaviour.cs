@@ -13,7 +13,7 @@ public class MasterBehaviour : MonoBehaviour {
 	public bool seesDeadPeople { get; set; }
 	private List<Vector3> deadPeopleSeen;
 
-	public bool hearsSomething { get; set; }
+	public bool isGoingToHeardPos { get; set; }
 	public bool isDead { get; set; }
 	public bool addToDeadSet { get; set; }
 	public bool isShooting { get; set; }
@@ -78,7 +78,7 @@ public class MasterBehaviour : MonoBehaviour {
 		lastSeen = Vector3.zero;
 		lastSeenForward = Vector3.zero;
 		seesDeadPeople = false;
-		hearsSomething = false;
+		isGoingToHeardPos = false;
 		disturbed = false;
 		isDead = false;
 		addToDeadSet = false;
@@ -233,7 +233,7 @@ public class MasterBehaviour : MonoBehaviour {
 	public bool isReachingGoal(){
 		//		return (seesPlayer || seesDeadPeople || hearsSomething) && !isDead;
 		//		return (seesPlayer || hearsSomething) && !isDead;
-		return ((isGoingToCover || isGoingToSeenPlayerPos) && !isDead);
+		return ((isGoingToCover || isGoingToSeenPlayerPos || isGoingToHeardPos) && !isDead);
 	}
 
 	public void getHit(int damage) {
@@ -309,5 +309,13 @@ public class MasterBehaviour : MonoBehaviour {
 	//either from hearing, seeing, or knowing another guard was taken out
 	public bool knowsOfSniper(){
 		return (sniperPosKnown || seesDeadPeople);
+	}
+
+	public void hearsNoise(Vector3 pos){
+		if (!seesPlayer){
+			//what to do if in cover and what to do if knowsOfSniper and what to do if seesSniper, probability stuff?
+			isGoingToHeardPos = true;
+			poi = pos;
+		}
 	}
 }

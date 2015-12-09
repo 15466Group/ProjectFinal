@@ -124,8 +124,18 @@ public class MasterScheduler : MonoBehaviour {
 		else
 			playerAngle = 30.0f + (10.0f * mb.alertLevel);
 		updateSniperInfoForChar (currChar, mb);
+		checkIfNearHeardNoise (currChar, mb);
 		updatePlayerInfoForChar (currChar, mb, playerAngle);
 		updateSearchingStatus ();
+	}
+
+	//sometimes player whistles and npc hears it
+	void checkIfNearHeardNoise(GameObject currChar, MasterBehaviour mb){
+		if (mb.isGoingToHeardPos) {
+			if (Vector3.Distance(currChar.transform.position, mb.poi) < nodeSize){
+				mb.isGoingToHeardPos = false;
+			}
+		}
 	}
 
 	void updateSearchingStatus(){
@@ -203,6 +213,7 @@ public class MasterScheduler : MonoBehaviour {
 				mb.isGoingToCover = false;
 				mb.disturbed = true;
 				mb.takingCover = false;
+				mb.isGoingToHeardPos = false;
 				makeEveryoneStopSearching(mb.lastSeen);
 			} else {
 				if(mb.seesPlayer) {

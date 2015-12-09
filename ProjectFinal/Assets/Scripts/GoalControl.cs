@@ -89,7 +89,7 @@ public class GoalControl : MonoBehaviour {
 			Destroy(clonedNoiseSphere, noise.clip.length);
 			Collider[] hits = Physics.OverlapSphere(transform.position, noiseRadius, soldierLayer);
 			foreach (Collider soldier in hits){
-				soldier.GetComponent<MasterBehaviour>().hearsSomething = true;
+				soldier.GetComponent<MasterBehaviour>().hearsNoise(transform.position);
 			}
 		}
 		if (noise.isPlaying) {
