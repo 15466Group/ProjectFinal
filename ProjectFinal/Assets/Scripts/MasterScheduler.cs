@@ -184,7 +184,7 @@ public class MasterScheduler : MonoBehaviour {
 //		Debug.DrawLine (currChar.transform.position, player.transform.position, Color.black);
 		if (Physics.Raycast (currChar.transform.position, player.transform.position - currChar.transform.position, out hit, sightDist)) {
 			float angle = Vector3.Angle (currChar.transform.forward, player.transform.position - currChar.transform.position);
-			if ((hit.collider.gameObject == player) && (angle <= playerAngle)) {
+			if ((hit.collider.gameObject == player) && ((angle <= playerAngle) || Vector3.Distance (currChar.transform.position, player.transform.position) < 10f)) {
 				if (!mb.seesPlayer && !mb.isGoingToSeenPlayerPos) {
 					mb.alert.Play (); //alert is first
 				}
@@ -193,9 +193,9 @@ public class MasterScheduler : MonoBehaviour {
 				mb.needsToRaiseAlertLevel = true;
 				mb.seesPlayer = true;
 				mb.seenTime += Time.deltaTime;
-				if (mb.seenTime > 2f) {
+				if (mb.seenTime > 1f) {
 					mb.isShooting = true;
-					mb.seenTime = 0f;
+					//mb.seenTime = 0f;
 				}
 				mb.poi = player.transform.position;
 				mb.isGoaling = true;
@@ -209,12 +209,14 @@ public class MasterScheduler : MonoBehaviour {
 					extendSearchInForwardDir(mb);
 				}
 				mb.seesPlayer = false;
+				mb.seenTime = 0f;
 			}
 		} else {
 			if(mb.seesPlayer) {
 				extendSearchInForwardDir(mb);
 			}
 			mb.seesPlayer = false;
+			mb.seenTime = 0f;
 		}
 
 		//reached the poi of where he last saw the player

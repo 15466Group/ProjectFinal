@@ -63,6 +63,11 @@ public class MasterBehaviour : MonoBehaviour {
 
 	public AudioSource gunShot;
 	public AudioSource alert;
+
+	private gun gunThingy;
+	float fireCycle;
+
+
 	// Use this for initialization
 	public void Starta (GameObject plane, float nodeSize, Vector3 sP) {
 
@@ -93,6 +98,8 @@ public class MasterBehaviour : MonoBehaviour {
 		patrol = GetComponent<Patrol> ();
 		gc = player.GetComponent<GoalControl> ();
 
+		gunThingy = GetComponentInChildren <gun> ();
+
 		reachGoal.plane = plane;
 		reachGoal.nodeSize = nodeSize;
 		reachGoal.goalPos = poi;
@@ -116,6 +123,7 @@ public class MasterBehaviour : MonoBehaviour {
 		isShooting = false;
 		ammoCount = 0;
 //		Debug.Log (transform.name);
+		fireCycle = 0f;
 	}
 
 	public void Updatea(){
@@ -131,9 +139,28 @@ public class MasterBehaviour : MonoBehaviour {
 			}
 			return;
 		}
+
+		if (seesPlayer) {
+			Quaternion destinationRotation;
+			Vector3 relativePosition;
+			relativePosition = player.transform.position - transform.position;
+			destinationRotation = Quaternion.LookRotation (relativePosition);
+			transform.rotation = Quaternion.Slerp (transform.rotation, destinationRotation, Time.deltaTime * 500f);
+		}
 		//and if the character is facing the character
-		if (isShooting && !gunShot.isPlaying && !gc.isDead && !isReloading && seesPlayer) {
-			shoot ();
+		if (isShooting && !gc.isDead && !isReloading && seesPlayer) {
+			//&& !gunShot.isPlaying
+			fireCycle += Time.deltaTime;
+			if(fireCycle < 0.5f)
+				shoot ();
+			else if(fireCycle < 1.2f){}
+				//donothing
+			else 
+				fireCycle = 0f;
+//			gunThingy.SendMessage ("Fire");
+			//gunThingy.Fire();
+			//gunThingy.SendMessage("Fire");
+//			this.SendMessage ("Fire");
 		}
 //		if (!(seesPlayer || seesDeadPeople || hearsSomething)) {
 		if (!isReachingGoal()) {
@@ -225,11 +252,13 @@ public class MasterBehaviour : MonoBehaviour {
 
 	public void shoot () {
 		gunShot.Play ();
-		lr.SetPosition (0, transform.position + Vector3.up);
-		lr.SetPosition (1, player.transform.position + Vector3.up);
-		lr.SetWidth (1f, 1f);
-		lr.enabled = true;
-		gc.getHit ();
+		//tells the gun to shoot
+		gunThingy.SendMessage("Fire");
+		//lr.SetPosition (0, transform.position + Vector3.up);
+		//lr.SetPosition (1, player.transform.position + Vector3.up);
+		//lr.SetWidth (1f, 1f);
+		//lr.enabled = true;
+		//gc.getHit ();
 
 	}
 
