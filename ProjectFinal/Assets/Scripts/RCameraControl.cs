@@ -77,6 +77,9 @@ public class RCameraControl : MonoBehaviour {
 					Debug.Log ("killed");
 					hit.collider.gameObject.GetComponent<MasterBehaviour> ().getHit (3);
 				}
+				if(hit.collider.tag == "Player") {
+					hit.collider.gameObject.GetComponent<GoalControl> ().die ();
+				}
 			}
 			gunShot.Play ();
 			clipSize -= 1;

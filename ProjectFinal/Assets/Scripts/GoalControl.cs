@@ -146,7 +146,8 @@ public class GoalControl : MonoBehaviour {
 		}
 	}
 
-	void die() {
+	public void die() {
+		health = 0;
 		isDead = true;
 		anim.CrossFade (dying);
 		//end game
