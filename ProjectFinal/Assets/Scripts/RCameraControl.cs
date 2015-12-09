@@ -32,6 +32,7 @@ public class RCameraControl : MonoBehaviour {
 	private int reserveSize;
 
 	public Texture tex;
+	private Texture2D pauseTex;
 
 	CursorLockMode wantedMode;
 
@@ -50,67 +51,75 @@ public class RCameraControl : MonoBehaviour {
 		ammo = 20;
 		reserveSize = ammo - clipSize;
 		reloading = false;
+		Time.timeScale = 1f;
+
+		pauseTex = new Texture2D(1, 1);
+		Color gray = new Color (0.1f, 0.1f, 0.1f, 0.8f);
+		pauseTex.SetPixel(0,0,gray);
+		pauseTex.Apply();
 	}
 
 	
 	void Update ()
 	{
-		rotationX += Input.GetAxis("Mouse X") * sensitivityM;
-		rotationX = Mathf.Clamp (rotationX, minimumX, maximumX);
-		rotationY += Input.GetAxis("Mouse Y") * sensitivityM;
-		rotationY = Mathf.Clamp (rotationY, minimumY, maximumY);
+		if (Time.timeScale != 0f) {
+			rotationX += Input.GetAxis ("Mouse X") * sensitivityM;
+			rotationX = Mathf.Clamp (rotationX, minimumX, maximumX);
+			rotationY += Input.GetAxis ("Mouse Y") * sensitivityM;
+			rotationY = Mathf.Clamp (rotationY, minimumY, maximumY);
 		
-		transform.localEulerAngles = new Vector3(-rotationY, rotationX, 0);
+			transform.localEulerAngles = new Vector3 (-rotationY, rotationX, 0);
 
-		FOV -= Input.GetAxisRaw ("Mouse ScrollWheel") * sensitivityW;
-		FOV = Mathf.Clamp (FOV, minimumFOV, maximumFOV);
-		sensitivityM = sensitivityMDefault * FOV / maximumFOV;
-		sensitivityM = Mathf.Clamp (FOV, 1f/8f * sensitivityMDefault, sensitivityMDefault);
-		Camera.main.fieldOfView = FOV;
+			FOV -= Input.GetAxisRaw ("Mouse ScrollWheel") * sensitivityW;
+			FOV = Mathf.Clamp (FOV, minimumFOV, maximumFOV);
+			sensitivityM = sensitivityMDefault * FOV / maximumFOV;
+			sensitivityM = Mathf.Clamp (FOV, 1f / 8f * sensitivityMDefault, sensitivityMDefault);
+			Camera.main.fieldOfView = FOV;
 
-		//FIRE
-		if (Input.GetMouseButtonDown (0) && !gunShot.isPlaying && clipSize > 0 && !reloadSound.isPlaying) {
-			RaycastHit hit;
-			if (Physics.Raycast (transform.position, transform.forward, out hit)) {
-				if(hit.collider.tag == "Soldier") {
-					//hit.collider.gameObject.GetComponent<ReachGoal>().kill();
-					Debug.Log ("killed");
-					hit.collider.gameObject.GetComponent<MasterBehaviour> ().getHit (3);
+			//FIRE
+			if (Input.GetMouseButtonDown (0) && !gunShot.isPlaying && clipSize > 0 && !reloadSound.isPlaying) {
+				RaycastHit hit;
+				if (Physics.Raycast (transform.position, transform.forward, out hit)) {
+					if (hit.collider.tag == "Soldier") {
+						//hit.collider.gameObject.GetComponent<ReachGoal>().kill();
+						Debug.Log ("killed");
+						hit.collider.gameObject.GetComponent<MasterBehaviour> ().getHit (3);
+					}
+					if (hit.collider.tag == "Player") {
+						hit.collider.gameObject.GetComponent<GoalControl> ().die ();
+					}
 				}
-				if(hit.collider.tag == "Player") {
-					hit.collider.gameObject.GetComponent<GoalControl> ().die ();
+				gunShot.Play ();
+				clipSize -= 1;
+				ammo -= 1;
+			}
+
+			//RELOAD
+			if (Input.GetMouseButtonDown (1) && clipSize < fullClipSize && reserveSize > 0 && !gunShot.isPlaying && !reloading) {
+				reloading = true;
+				reloadSound.Play ();
+			}
+
+			if (reloading) {
+				if (!reloadSound.isPlaying) {
+					clipSize = Mathf.Min (reserveSize, fullClipSize);
+					reserveSize = ammo - clipSize;
+					reloading = false;
 				}
 			}
-			gunShot.Play ();
-			clipSize -= 1;
-			ammo -= 1;
 		}
 
-		//RELOAD
-		if (Input.GetMouseButtonDown (1) && clipSize < fullClipSize && reserveSize > 0 && !gunShot.isPlaying && !reloading) {
-			reloading = true;
-			reloadSound.Play ();
-		}
+//		if (Input.GetKeyDown (KeyCode.R))
+//			Application.LoadLevel(Application.loadedLevel);
 
-		if (reloading) {
-			if (!reloadSound.isPlaying){
-				clipSize = Mathf.Min(reserveSize, fullClipSize);
-				reserveSize = ammo - clipSize;
-				reloading = false;
-			}
-		}
-
-		if (Input.GetKeyDown (KeyCode.R))
-			Application.LoadLevel(Application.loadedLevel);
-
-		if (Input.GetKeyDown (KeyCode.P)) {
-			if(Time.timeScale != 0f) {
-				Time.timeScale = 0f;
-			}
-			else {
-				Time.timeScale = 1f;
-			}
-		}
+//		if (Input.GetKeyDown (KeyCode.P)) {
+//			if(Time.timeScale != 0f) {
+//				Time.timeScale = 0f;
+//			}
+//			else {
+//				Time.timeScale = 1f;
+//			}
+//		}
 
 	}
 
@@ -134,10 +143,75 @@ public class RCameraControl : MonoBehaviour {
 //		GUI.EndGroup ();
 
 		if (Input.GetKeyDown (KeyCode.Escape)) {
-			Cursor.lockState = wantedMode = CursorLockMode.None;
+			//Cursor.lockState = wantedMode = CursorLockMode.None;
+//			if(Time.timeScale != 0f) {
+//				Debug.Log ("game paused");
+//				Time.timeScale = 0f;
+//			}
+//			else {
+//				Debug.Log ("game unpaused");
+//				Time.timeScale = 1f;
+//			}
+			Time.timeScale = 0f;
 		}
 
-		GUILayout.BeginVertical ();
+		if (Time.timeScale == 0f) {
+
+			GUI.skin.box.normal.background = pauseTex;
+			GUI.Box(new Rect(0f, 0f, Screen.width, Screen.height), GUIContent.none);
+
+			Cursor.lockState = wantedMode = CursorLockMode.None;
+//			GUILayout.BeginVertical ();
+//			if (GUILayout.Button ("UNPAUSE")) {
+//				Time.timeScale = 1f;
+//			}
+//			if (GUILayout.Button ("QUIT")) {
+//				Application.LoadLevel (4);
+//			}
+//			if (GUILayout.Button ("RESTART")) {
+//				Application.LoadLevel (Application.loadedLevel);
+//			}
+//			GUILayout.EndVertical ();
+
+
+
+			GUILayout.BeginHorizontal ();
+			{
+				GUILayout.BeginVertical (GUILayout.Width (Screen.width/3));
+				{
+					GUILayout.Label ("", GUILayout.Width (Screen.width/3));
+				}
+				GUILayout.EndVertical ();
+				
+				GUILayout.BeginVertical (GUILayout.Width (Screen.width/3));
+				{
+					GUILayout.BeginVertical ();
+					{
+						GUILayout.Label ("", GUILayout.Height (Screen.height/3));
+					}
+					GUILayout.EndVertical ();
+					if (GUILayout.Button ("UNPAUSE")) {
+						Time.timeScale = 1f;
+					}
+					if (GUILayout.Button ("QUIT")) {
+						Application.LoadLevel (4);
+					}
+					if (GUILayout.Button ("RESTART")) {
+						Application.LoadLevel (Application.loadedLevel);
+					}
+				}
+				GUILayout.EndVertical ();
+			}
+			GUILayout.EndHorizontal ();
+
+
+		} else {
+			wantedMode = CursorLockMode.Locked;
+		}
+
+//		GUILayout.BeginVertical ();
+
+
 //		 Release cursor on escape keypress
 //		if (Input.GetKeyDown (KeyCode.Escape)) {
 //
@@ -155,32 +229,32 @@ public class RCameraControl : MonoBehaviour {
 //
 //		}
 		
-		switch (Cursor.lockState)
-		{
-		case CursorLockMode.None:
-			GUILayout.Label ("Cursor is normal");
-			if (GUILayout.Button ("Lock cursor"))
-				wantedMode = CursorLockMode.Locked;
-			if (GUILayout.Button ("Confine cursor"))
-				wantedMode = CursorLockMode.Confined;
-			break;
-		case CursorLockMode.Confined:
-			GUILayout.Label ("Cursor is confined");
-			if (GUILayout.Button ("Lock cursor"))
-				wantedMode = CursorLockMode.Locked;
-			if (GUILayout.Button ("Release cursor"))
-				wantedMode = CursorLockMode.None;
-			break;
-		case CursorLockMode.Locked:
-			GUILayout.Label ("Cursor is locked");
-			if (GUILayout.Button ("Unlock cursor"))
-				wantedMode = CursorLockMode.None;
-			if (GUILayout.Button ("Confine cursor"))
-				wantedMode = CursorLockMode.Confined;
-			break;
-		}
+//		switch (Cursor.lockState)
+//		{
+//		case CursorLockMode.None:
+//			GUILayout.Label ("Cursor is normal");
+//			if (GUILayout.Button ("Lock cursor"))
+//				wantedMode = CursorLockMode.Locked;
+//			if (GUILayout.Button ("Confine cursor"))
+//				wantedMode = CursorLockMode.Confined;
+//			break;
+//		case CursorLockMode.Confined:
+//			GUILayout.Label ("Cursor is confined");
+//			if (GUILayout.Button ("Lock cursor"))
+//				wantedMode = CursorLockMode.Locked;
+//			if (GUILayout.Button ("Release cursor"))
+//				wantedMode = CursorLockMode.None;
+//			break;
+//		case CursorLockMode.Locked:
+//			GUILayout.Label ("Cursor is locked");
+//			if (GUILayout.Button ("Unlock cursor"))
+//				wantedMode = CursorLockMode.None;
+//			if (GUILayout.Button ("Confine cursor"))
+//				wantedMode = CursorLockMode.Confined;
+//			break;
+//		}
 		
-		GUILayout.EndVertical ();
+//		GUILayout.EndVertical ();
 		
 		SetCursorState ();
 
