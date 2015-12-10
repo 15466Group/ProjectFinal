@@ -25,6 +25,7 @@ public class RCameraControl : MonoBehaviour {
 
 	private AudioSource gunShot;
 	private AudioSource reloadSound;
+	private AudioSource emptyClipSound;
 	private int ammo;
 	private bool reloading;
 	private int fullClipSize;
@@ -44,6 +45,7 @@ public class RCameraControl : MonoBehaviour {
 		FOV = 90.0f;
 		gunShot = this.GetComponents<AudioSource> ()[0];
 		reloadSound = this.GetComponents<AudioSource> () [1];
+		emptyClipSound = this.GetComponents<AudioSource> () [2];
 		wantedMode = CursorLockMode.Locked;
 		sensitivityM = sensitivityMDefault;
 		fullClipSize = 4;
@@ -77,25 +79,30 @@ public class RCameraControl : MonoBehaviour {
 			Camera.main.fieldOfView = FOV;
 
 			//FIRE
-			if (Input.GetMouseButtonDown (0) && !gunShot.isPlaying && clipSize > 0 && !reloadSound.isPlaying) {
-				RaycastHit hit;
-				if (Physics.Raycast (transform.position, transform.forward, out hit)) {
-					if (hit.collider.tag == "Soldier") {
-						//hit.collider.gameObject.GetComponent<ReachGoal>().kill();
-						Debug.Log ("killed");
-						hit.collider.gameObject.GetComponent<MasterBehaviour> ().getHit (3);
-					}
-					if (hit.collider.tag == "Player") {
-						hit.collider.gameObject.GetComponent<GoalControl> ().die ();
-					}
+			if (Input.GetMouseButtonDown (0)){
+				if (clipSize == 0 && !gunShot.isPlaying && !reloadSound.isPlaying && !emptyClipSound.isPlaying){
+					emptyClipSound.Play();
 				}
-				gunShot.Play ();
-				clipSize -= 1;
-				ammo -= 1;
+				else if (!gunShot.isPlaying && clipSize > 0 && !reloadSound.isPlaying) {
+					RaycastHit hit;
+					if (Physics.Raycast (transform.position, transform.forward, out hit)) {
+						if (hit.collider.tag == "Soldier") {
+							//hit.collider.gameObject.GetComponent<ReachGoal>().kill();
+							Debug.Log ("killed");
+							hit.collider.gameObject.GetComponent<MasterBehaviour> ().getHit (3);
+						}
+						if (hit.collider.tag == "Player") {
+							hit.collider.gameObject.GetComponent<GoalControl> ().die ();
+						}
+					}
+					gunShot.Play ();
+					clipSize -= 1;
+					ammo -= 1;
+				}
 			}
 
 			//RELOAD
-			if (Input.GetMouseButtonDown (1) && clipSize < fullClipSize && reserveSize > 0 && !gunShot.isPlaying && !reloading) {
+			if (Input.GetMouseButtonDown (1) && clipSize < fullClipSize && reserveSize > 0 && !gunShot.isPlaying && !reloading && !emptyClipSound.isPlaying) {
 				reloading = true;
 				reloadSound.Play ();
 			}
