@@ -33,6 +33,9 @@ public class GoalControl : MonoBehaviour {
 	private Texture2D healthTex;
 
 	private bool gamePaused;
+
+	public bool won { get; set; }
+	public GameObject endPoint;
 	
 	void Start()
 	{
@@ -53,10 +56,17 @@ public class GoalControl : MonoBehaviour {
 		healthTex.SetPixel(0,0,Color.green);
 		healthTex.Apply();
 		gamePaused = false;
+		won = false;
 	}
 
 	void Update()
 	{
+		if (Vector3.Distance (endPoint.transform.position, transform.position) < 5f) {
+			won = true;
+		}
+		if (won) {
+			return;
+		}
 		if (isDead)
 			return; // do end scene
 		float moveHorizontal = Input.GetAxis ("Horizontal");

@@ -37,6 +37,9 @@ public class RCameraControl : MonoBehaviour {
 
 	CursorLockMode wantedMode;
 
+	public GameObject sneaker;
+	private GoalControl gc;
+
 
 	void Start ()
 	{
@@ -59,6 +62,8 @@ public class RCameraControl : MonoBehaviour {
 		Color gray = new Color (0.1f, 0.1f, 0.1f, 0.8f);
 		pauseTex.SetPixel(0,0,gray);
 		pauseTex.Apply();
+
+
 	}
 
 	
@@ -140,7 +145,9 @@ public class RCameraControl : MonoBehaviour {
 	}
 
 	void OnGUI () {
-
+		if (gc == null) {
+			gc = sneaker.GetComponent <GoalControl> ();
+		}
 		//Rect textureCrop = new Rect ((tex.width/2f-Screen.width/2f)/tex.width, (tex.height/2f-Screen.height/2f)/tex.height, Screen.width/tex.width, Screen.height/tex.height);
 //		Rect textureCrop = new Rect ((tex.width/2f-Screen.width/2f)/tex.width, (tex.height/2f-Screen.height/2f)/tex.height, 1f, 1f);
 //		Vector2 position = new Vector2 (Screen.width/2f, 0f);
@@ -149,7 +156,7 @@ public class RCameraControl : MonoBehaviour {
 //		GUI.DrawTexture (new Rect (-tex.width * textureCrop.x, -tex.height * textureCrop.y, tex.width * textureCrop.width, tex.height * textureCrop.height), tex );
 //		GUI.EndGroup ();
 
-		if (Input.GetKeyDown (KeyCode.Escape)) {
+		if (Input.GetKeyDown (KeyCode.Escape) || gc.won || gc.isDead) {
 			//Cursor.lockState = wantedMode = CursorLockMode.None;
 //			if(Time.timeScale != 0f) {
 //				Debug.Log ("game paused");
@@ -166,51 +173,108 @@ public class RCameraControl : MonoBehaviour {
 
 			GUI.skin.box.normal.background = pauseTex;
 			GUI.Box(new Rect(0f, 0f, Screen.width, Screen.height), GUIContent.none);
-
+			
 			Cursor.lockState = wantedMode = CursorLockMode.None;
-//			GUILayout.BeginVertical ();
-//			if (GUILayout.Button ("UNPAUSE")) {
-//				Time.timeScale = 1f;
-//			}
-//			if (GUILayout.Button ("QUIT")) {
-//				Application.LoadLevel (4);
-//			}
-//			if (GUILayout.Button ("RESTART")) {
-//				Application.LoadLevel (Application.loadedLevel);
-//			}
-//			GUILayout.EndVertical ();
 
-
-
-			GUILayout.BeginHorizontal ();
-			{
-				GUILayout.BeginVertical (GUILayout.Width (Screen.width/3));
+			if(gc.won) {
+				GUILayout.BeginHorizontal ();
 				{
-					GUILayout.Label ("", GUILayout.Width (Screen.width/3));
-				}
-				GUILayout.EndVertical ();
-				
-				GUILayout.BeginVertical (GUILayout.Width (Screen.width/3));
-				{
-					GUILayout.BeginVertical ();
+					GUILayout.BeginVertical (GUILayout.Width (Screen.width/3));
 					{
-						GUILayout.Label ("", GUILayout.Height (Screen.height/3));
+						GUILayout.Label ("", GUILayout.Width (Screen.width/3));
 					}
 					GUILayout.EndVertical ();
-					if (GUILayout.Button ("UNPAUSE")) {
-						Time.timeScale = 1f;
+					
+					GUILayout.BeginVertical (GUILayout.Width (Screen.width/3));
+					{
+						GUILayout.BeginVertical ();
+						{
+							GUILayout.Label ("", GUILayout.Height (Screen.height/3));
+						}
+						GUILayout.EndVertical ();
+						GUILayout.Label ("YOU WON");
+						if (GUILayout.Button ("MENU")) {
+							Application.LoadLevel (4);
+						}
+						if (GUILayout.Button ("RESTART")) {
+							Application.LoadLevel (Application.loadedLevel);
+						}
 					}
-					if (GUILayout.Button ("QUIT")) {
-						Application.LoadLevel (4);
-					}
-					if (GUILayout.Button ("RESTART")) {
-						Application.LoadLevel (Application.loadedLevel);
-					}
+					GUILayout.EndVertical ();
 				}
-				GUILayout.EndVertical ();
+				GUILayout.EndHorizontal ();
 			}
-			GUILayout.EndHorizontal ();
+			else if (gc.isDead) {
+				GUILayout.BeginHorizontal ();
+				{
+					GUILayout.BeginVertical (GUILayout.Width (Screen.width/3));
+					{
+						GUILayout.Label ("", GUILayout.Width (Screen.width/3));
+					}
+					GUILayout.EndVertical ();
+					
+					GUILayout.BeginVertical (GUILayout.Width (Screen.width/3));
+					{
+						GUILayout.BeginVertical ();
+						{
+							GUILayout.Label ("", GUILayout.Height (Screen.height/3));
+						}
+						GUILayout.EndVertical ();
+						GUILayout.Label ("YOU DIED");
+						if (GUILayout.Button ("MENU")) {
+							Application.LoadLevel (4);
+						}
+						if (GUILayout.Button ("RESTART")) {
+							Application.LoadLevel (Application.loadedLevel);
+						}
+					}
+					GUILayout.EndVertical ();
+				}
+				GUILayout.EndHorizontal ();
+			}
+			else {
 
+	//			GUILayout.BeginVertical ();
+	//			if (GUILayout.Button ("UNPAUSE")) {
+	//				Time.timeScale = 1f;
+	//			}
+	//			if (GUILayout.Button ("QUIT")) {
+	//				Application.LoadLevel (4);
+	//			}
+	//			if (GUILayout.Button ("RESTART")) {
+	//				Application.LoadLevel (Application.loadedLevel);
+	//			}
+	//			GUILayout.EndVertical ();
+
+				GUILayout.BeginHorizontal ();
+				{
+					GUILayout.BeginVertical (GUILayout.Width (Screen.width/3));
+					{
+						GUILayout.Label ("", GUILayout.Width (Screen.width/3));
+					}
+					GUILayout.EndVertical ();
+					
+					GUILayout.BeginVertical (GUILayout.Width (Screen.width/3));
+					{
+						GUILayout.BeginVertical ();
+						{
+							GUILayout.Label ("", GUILayout.Height (Screen.height/3));
+						}
+						GUILayout.EndVertical ();
+						if (GUILayout.Button ("UNPAUSE")) {
+							Time.timeScale = 1f;
+						}
+						if (GUILayout.Button ("MENU")) {
+							Application.LoadLevel (4);
+						}
+						if (GUILayout.Button ("RESTART")) {
+							Application.LoadLevel (Application.loadedLevel);
+						}
+					}
+					GUILayout.EndVertical ();
+				}
+				GUILayout.EndHorizontal ();
+			}
 
 		} else {
 			wantedMode = CursorLockMode.Locked;

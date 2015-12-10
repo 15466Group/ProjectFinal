@@ -30,8 +30,17 @@ public class StartScript : MonoBehaviour {
 				}
 				GUILayout.EndVertical ();
 				GUILayout.Label ("WELCOME TO GAME");
-				if (GUILayout.Button ("START LEVEL")) {
-					Application.LoadLevel (1);
+				if (GUILayout.Button ("Tutorial 1")) {
+					Application.LoadLevel ("Tutorial1");
+				}
+				if (GUILayout.Button ("Tutorial 2")) {
+					Application.LoadLevel ("Tutorial2");
+				}
+				if (GUILayout.Button ("Tutorial 3")) {
+					Application.LoadLevel ("Tutorial3");
+				}
+				if (GUILayout.Button ("Mission 1")) {
+					Application.LoadLevel ("Aesthetics 2");
 				}
 			}
 			GUILayout.EndVertical ();
