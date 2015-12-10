@@ -68,6 +68,8 @@ public class MasterScheduler : MonoBehaviour {
 		sniperScript = sniper.GetComponent <RCameraControl> ();
 		lowkeyBGM = GetComponents<AudioSource> () [0];
 		hikeyBGM = GetComponents<AudioSource> () [1];
+		lowkeyBGM.volume = 0.7f;
+		hikeyBGM.volume = 0.7f;
 		lowkeyBGM.Play ();
 
 	}

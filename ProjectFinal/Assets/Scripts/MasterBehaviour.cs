@@ -127,6 +127,8 @@ public class MasterBehaviour : MonoBehaviour {
 		ammoCount = 0;
 //		Debug.Log (transform.name);
 		fireCycle = 0f;
+		gunShot.volume = 0.3f;
+		alert.volume = 0.6f;
 	}
 
 	public void Updatea(){
