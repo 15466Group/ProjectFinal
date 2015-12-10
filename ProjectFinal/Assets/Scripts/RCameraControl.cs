@@ -40,8 +40,8 @@ public class RCameraControl : MonoBehaviour {
 	public GameObject sneaker;
 	private GoalControl gc;
 
-	public int fired;
-
+	public int fired { get; set; }
+	public bool firstSniperFired { get; set; }
 
 	void Start ()
 	{
@@ -65,7 +65,7 @@ public class RCameraControl : MonoBehaviour {
 		pauseTex.SetPixel(0,0,gray);
 		pauseTex.Apply();
 		fired = 0;
-
+		firstSniperFired = false;
 	}
 
 	
@@ -104,6 +104,10 @@ public class RCameraControl : MonoBehaviour {
 					}
 					gunShot.Play ();
 					fired++;
+					if (fired == 1)
+						firstSniperFired = true;
+					else
+						firstSniperFired = false;
 					clipSize -= 1;
 					ammo -= 1;
 				}

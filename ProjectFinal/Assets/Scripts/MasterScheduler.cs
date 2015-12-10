@@ -34,6 +34,8 @@ public class MasterScheduler : MonoBehaviour {
 	private bool gamePaused;//handle pausing in middle of sounds
 	public int alert;
 
+	private AudioSource lowkeyBGM;
+	private AudioSource hikeyBGM;
 
 	// Use this for initialization
 	void Start () {
@@ -63,6 +65,9 @@ public class MasterScheduler : MonoBehaviour {
 		alert = 0;
 
 		sniperScript = sniper.GetComponent <RCameraControl> ();
+		lowkeyBGM = GetComponents<AudioSource> () [0];
+		hikeyBGM = GetComponents<AudioSource> () [1];
+		lowkeyBGM.Play ();
 	}
 
 	void Awake(){
@@ -82,6 +87,10 @@ public class MasterScheduler : MonoBehaviour {
 
 		if (sniperScript.fired > 0) {
 			alert = 2;
+			if (lowkeyBGM.isPlaying && !hikeyBGM.isPlaying){
+				lowkeyBGM.Stop();
+				hikeyBGM.Play ();
+			}
 		}
 
 
@@ -177,7 +186,7 @@ public class MasterScheduler : MonoBehaviour {
 		if (mb.knowsOfSniper ()) {
 			if (!mb.seesPlayer)
 				mb.takingCover = true;
-			if (!mb.isGoingToSeenPlayerPos && !mb.reachedCover) {
+			if (!mb.isGoingToSeenPlayerPos && (!mb.reachedCover || sniperScript.firstSniperFired)) {
 				//going to cover
 				mb.poi = mb.takeCover.coverPoint (currChar.transform.position);
 				mb.isGoaling = true;
@@ -304,6 +313,10 @@ public class MasterScheduler : MonoBehaviour {
 		//seenDeadSet now updated so pass this along to every character because assumed they are now notified of all dead positions
 //		if (updatedDeadSet > 0) {
 		if (alert > 0) {
+			if (lowkeyBGM.isPlaying && !hikeyBGM.isPlaying){
+				lowkeyBGM.Stop();
+				hikeyBGM.Play ();
+			}
 			for (int i = 0; i < numChars; i++) {
 				GameObject currChar = characters.transform.GetChild (i).gameObject;
 				MasterBehaviour mb = behaviourScripts [i];
