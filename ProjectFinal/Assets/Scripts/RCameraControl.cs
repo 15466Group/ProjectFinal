@@ -56,6 +56,10 @@ public class RCameraControl : MonoBehaviour {
 		fullClipSize = 4;
 		clipSize = fullClipSize;
 		ammo = 16;
+		if (string.Compare (Application.loadedLevelName, "Tutorial2") == 0) {
+			ammo = 0;
+			clipSize = 0;
+		}
 		reserveSize = ammo - clipSize;
 		reloading = false;
 		Time.timeScale = 1f;
