@@ -37,6 +37,7 @@ public class MasterScheduler : MonoBehaviour {
 	private AudioSource lowkeyBGM;
 	private AudioSource hikeyBGM;
 
+
 	// Use this for initialization
 	void Start () {
 		numChars = characters.transform.childCount;
@@ -68,6 +69,7 @@ public class MasterScheduler : MonoBehaviour {
 		lowkeyBGM = GetComponents<AudioSource> () [0];
 		hikeyBGM = GetComponents<AudioSource> () [1];
 		lowkeyBGM.Play ();
+
 	}
 
 	void Awake(){
