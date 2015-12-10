@@ -55,7 +55,7 @@ public class RCameraControl : MonoBehaviour {
 		sensitivityM = sensitivityMDefault;
 		fullClipSize = 4;
 		clipSize = fullClipSize;
-		ammo = 16;
+		ammo = 8;
 		if (string.Compare (Application.loadedLevelName, "Tutorial2") == 0) {
 			ammo = 0;
 			clipSize = 0;
