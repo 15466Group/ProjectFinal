@@ -42,6 +42,8 @@ public class MasterBehaviour : MonoBehaviour {
 	public string defaultBehaviour;
 	private Vector3 velocity;
 	public TakeCover takeCover { get; set; }
+	private BoxCollider bc;
+	private float bcCenterYNorm;
 
 	public string idle;
 	public string walking;
@@ -110,7 +112,8 @@ public class MasterBehaviour : MonoBehaviour {
 		standstill.Starta ();
 		takeCover = new TakeCover (reachGoal.state.sGrid.hiddenSpaceCost, reachGoal.state.sGrid.initSpaceCost,
 		                           reachGoal.state.sGrid.grid, reachGoal.state.sGrid.spaceCostScalars);
-
+		bc = GetComponent<BoxCollider>();
+		bcCenterYNorm = bc.center.y;
 		anim = GetComponent<Animation> ();
 		anim.CrossFade (idle);
 		walkingSpeed = 10.0f;
@@ -133,7 +136,6 @@ public class MasterBehaviour : MonoBehaviour {
 			if (!fixedDeadCollider){
 				transform.gameObject.layer = LayerMask.NameToLayer("Dead"); //now dead so avoid this space;
 				transform.gameObject.tag = "Dead";
-				BoxCollider bc = GetComponent<BoxCollider>();
 				bc.center = new Vector3(0f, -0.5f, 0f);
 				fixedDeadCollider = true;
 			}
@@ -151,7 +153,7 @@ public class MasterBehaviour : MonoBehaviour {
 		if (isShooting && !gc.isDead && !isReloading && seesPlayer) {
 			//&& !gunShot.isPlaying
 			fireCycle += Time.deltaTime;
-			if(fireCycle < 0.5f)
+			if(fireCycle < 0.5f && Time.timeScale > 0f)
 				shoot ();
 			else if(fireCycle < 1.2f){}
 				//donothing
@@ -271,6 +273,7 @@ public class MasterBehaviour : MonoBehaviour {
 		}
 		float mag = velocity.magnitude;
 		if (takingCover){
+			bc.center = new Vector3(0f, bcCenterYNorm * 0.5f, 0f);
 			if (mag > 0.0f && mag <= walkingSpeed) {
 				anim.CrossFade (crouchRun);
 			} else if (mag > walkingSpeed) {
@@ -279,6 +282,9 @@ public class MasterBehaviour : MonoBehaviour {
 				anim.CrossFade (crouchIdle);
 			}
 		} else {
+			if (sniperPosKnown == true){
+				bc.center = new Vector3(0f, bcCenterYNorm, 0f);
+			}
 			if (mag > 0.0f && mag <= walkingSpeed) {
 				anim.CrossFade (walking);
 			} else if (mag > walkingSpeed) {

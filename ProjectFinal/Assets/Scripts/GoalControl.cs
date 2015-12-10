@@ -31,6 +31,8 @@ public class GoalControl : MonoBehaviour {
 
 	public bool isDead { get; set; } 
 	private Texture2D healthTex;
+
+	private bool gamePaused;
 	
 	void Start()
 	{
@@ -46,10 +48,11 @@ public class GoalControl : MonoBehaviour {
 		previousValidPos = transform.position;
 		soldierLayer = 1 << (LayerMask.NameToLayer("Soldier"));
 		obstacleLayer = 1 << (LayerMask.NameToLayer("Obstacles"));
-		health = 20;
+		health = 10;
 		healthTex = new Texture2D(1, 1);
 		healthTex.SetPixel(0,0,Color.green);
 		healthTex.Apply();
+		gamePaused = false;
 	}
 
 	void Update()
@@ -81,7 +84,7 @@ public class GoalControl : MonoBehaviour {
 	//player can make noise to try and attract those nearby her
 	void checkForMakingSound(){
 		//spawn sphere for length of audio component
-		if (Input.GetKeyDown (KeyCode.Q) && !noise.isPlaying) {
+		if (Input.GetKeyDown (KeyCode.Q) && !noise.isPlaying && Time.timeScale > 0f) {
 			noise.Play();
 			clonedNoiseSphere = (GameObject)Instantiate(noiseSphere, transform.position, Quaternion.identity);
 			mat = clonedNoiseSphere.GetComponent<MeshRenderer>().material;
@@ -92,11 +95,20 @@ public class GoalControl : MonoBehaviour {
 				soldier.GetComponent<MasterBehaviour>().hearsNoise(transform.position);
 			}
 		}
+		if (gamePaused && Time.timeScale > 0f) {
+				gamePaused = false;
+				noise.UnPause();
+		}
 		if (noise.isPlaying) {
-			float targetAlpha = 0f;
-			float ratio = Time.deltaTime / noise.clip.length;
-			float a = (startAlpha - targetAlpha) * ratio;
-			mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, mat.color.a - a/255f);
+			if (Time.timeScale == 0f){
+				gamePaused = true;
+				noise.Pause();
+			} else {
+				float targetAlpha = 0f;
+				float ratio = Time.deltaTime / noise.clip.length;
+				float a = (startAlpha - targetAlpha) * ratio;
+				mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, mat.color.a - a/255f);
+			}
 		}
 	}
 

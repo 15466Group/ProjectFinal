@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 [AddComponentMenu("Camera-Control/Mouse Look")]
@@ -46,9 +46,9 @@ public class RCameraControl : MonoBehaviour {
 		reloadSound = this.GetComponents<AudioSource> () [1];
 		wantedMode = CursorLockMode.Locked;
 		sensitivityM = sensitivityMDefault;
-		fullClipSize = 5;
+		fullClipSize = 4;
 		clipSize = fullClipSize;
-		ammo = 20;
+		ammo = 16;
 		reserveSize = ammo - clipSize;
 		reloading = false;
 		Time.timeScale = 1f;

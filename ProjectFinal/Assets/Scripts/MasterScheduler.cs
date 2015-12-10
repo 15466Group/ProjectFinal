@@ -29,6 +29,8 @@ public class MasterScheduler : MonoBehaviour {
 	private List<MasterBehaviour> currentlySearching;
 	private float maxDist;
 
+	private bool gamePaused;//handle pausing in middle of sounds
+
 
 	// Use this for initialization
 	void Start () {
@@ -54,7 +56,7 @@ public class MasterScheduler : MonoBehaviour {
 		NB = new NaiveBayes (behaviourScripts [0].reachGoal.state.sGrid.hiddenSpaceCost, maxDist);
 		NB.Starta ();
 		currentlySearching = new List<MasterBehaviour> ();
-
+		gamePaused = false;
 	}
 
 	void Awake(){
@@ -287,6 +289,16 @@ public class MasterScheduler : MonoBehaviour {
 			MasterBehaviour mb = behaviourScripts [i];
 			if (!mb.isDead){
 				updatedDeadSet += checkToSeeDead(currChar, mb, sightAngle);
+			}
+			if (mb.alert.isPlaying){
+				if (Time.timeScale == 0f){
+					gamePaused = true;
+					mb.alert.Pause();
+				}
+			}
+			if (gamePaused && Time.timeScale > 0f){
+				gamePaused = false;
+				mb.alert.UnPause();
 			}
 		}
 		
