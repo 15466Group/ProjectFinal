@@ -108,6 +108,7 @@ public class MasterScheduler : MonoBehaviour {
 		}
 
 
+
 		//update guard status and check relationship between player and handle pathfinding
 		for (int i = 0; i < numChars; i++){
 			GameObject currChar = characters.transform.GetChild(i).gameObject;
@@ -271,6 +272,10 @@ public class MasterScheduler : MonoBehaviour {
 		if (Vector3.Distance (mb.poi, currChar.transform.position) <= nodeSize && mb.isGoingToSeenPlayerPos && !mb.seesPlayer) {
 			guessDirection(mb);
 		} 
+//		if (alert == normAlert) {
+//			mb.disturbed = true;
+//			mb.dirSearchCountDown = 1f;
+//		}
 	}
 
 	void extendSearchInForwardDir(MasterBehaviour mb){

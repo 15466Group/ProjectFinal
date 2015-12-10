@@ -129,6 +129,7 @@ public class MasterBehaviour : MonoBehaviour {
 		fireCycle = 0f;
 		gunShot.volume = 0.3f;
 		alert.volume = 0.6f;
+		wanderDir = 0;
 	}
 
 	public void Updatea(){
@@ -171,6 +172,7 @@ public class MasterBehaviour : MonoBehaviour {
 //			if (!takingCover){
 			if (takingCover && dirSearchCountDown <= 0) {
 				//donothing;
+				wanderDir = 0;
 				standstill.Updatea ();
 				velocity = standstill.velocity;
 			}
