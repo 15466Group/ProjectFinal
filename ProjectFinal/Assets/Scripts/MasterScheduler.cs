@@ -8,6 +8,8 @@ public class MasterScheduler : MonoBehaviour {
 	public GameObject characters;
 	public GameObject sniper;
 
+	private RCameraControl sniperScript;
+
 	public GameObject plane;
 	public float nodeSize;
 
@@ -30,6 +32,7 @@ public class MasterScheduler : MonoBehaviour {
 	private float maxDist;
 
 	private bool gamePaused;//handle pausing in middle of sounds
+	public int alert;
 
 
 	// Use this for initialization
@@ -57,6 +60,9 @@ public class MasterScheduler : MonoBehaviour {
 		NB.Starta ();
 		currentlySearching = new List<MasterBehaviour> ();
 		gamePaused = false;
+		alert = 0;
+
+		sniperScript = sniper.GetComponent <RCameraControl> ();
 	}
 
 	void Awake(){
@@ -73,6 +79,11 @@ public class MasterScheduler : MonoBehaviour {
 
 		//update anything that has to do with guards with respect to other guards
 		checkGuardRelationship ();
+
+		if (sniperScript.fired > 0) {
+			alert = 2;
+		}
+
 
 		//update guard status and check relationship between player and handle pathfinding
 		for (int i = 0; i < numChars; i++){
@@ -206,6 +217,7 @@ public class MasterScheduler : MonoBehaviour {
 				mb.seesPlayer = true;
 				mb.seenTime += Time.deltaTime;
 				if (mb.seenTime > 1f) {
+					alert = Mathf.Max (alert, 1);
 					mb.isShooting = true;
 					//mb.seenTime = 0f;
 				}
@@ -267,19 +279,6 @@ public class MasterScheduler : MonoBehaviour {
 	}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 	void checkGuardRelationship(){
 		//add dead characters to seenDeadSet if an alive character sees a dead one
 		float sightAngle = 30.0f;
@@ -303,14 +302,17 @@ public class MasterScheduler : MonoBehaviour {
 		}
 		
 		//seenDeadSet now updated so pass this along to every character because assumed they are now notified of all dead positions
-		if (updatedDeadSet > 0) {
+//		if (updatedDeadSet > 0) {
+		if (alert > 0) {
 			for (int i = 0; i < numChars; i++) {
 				GameObject currChar = characters.transform.GetChild (i).gameObject;
 				MasterBehaviour mb = behaviourScripts [i];
 				if (!mb.isDead) {
 					mb.updateDeadSet (seenDeadSet);
 					//fixme
-					mb.updateSniperPos();
+					if(alert == 2) {
+						mb.updateSniperPos();
+					}
 					mb.needsToRaiseAlertLevel = true;
 					//should stop and stare for a few frames
 				}

@@ -40,6 +40,8 @@ public class RCameraControl : MonoBehaviour {
 	public GameObject sneaker;
 	private GoalControl gc;
 
+	public int fired;
+
 
 	void Start ()
 	{
@@ -62,7 +64,7 @@ public class RCameraControl : MonoBehaviour {
 		Color gray = new Color (0.1f, 0.1f, 0.1f, 0.8f);
 		pauseTex.SetPixel(0,0,gray);
 		pauseTex.Apply();
-
+		fired = 0;
 
 	}
 
@@ -101,6 +103,7 @@ public class RCameraControl : MonoBehaviour {
 						}
 					}
 					gunShot.Play ();
+					fired++;
 					clipSize -= 1;
 					ammo -= 1;
 				}
@@ -194,7 +197,7 @@ public class RCameraControl : MonoBehaviour {
 						GUILayout.EndVertical ();
 						GUILayout.Label ("YOU WON");
 						if (GUILayout.Button ("MENU")) {
-							Application.LoadLevel (4);
+							Application.LoadLevel ("Start");
 						}
 						if (GUILayout.Button ("RESTART")) {
 							Application.LoadLevel (Application.loadedLevel);
@@ -222,7 +225,7 @@ public class RCameraControl : MonoBehaviour {
 						GUILayout.EndVertical ();
 						GUILayout.Label ("YOU DIED");
 						if (GUILayout.Button ("MENU")) {
-							Application.LoadLevel (4);
+							Application.LoadLevel ("Start");
 						}
 						if (GUILayout.Button ("RESTART")) {
 							Application.LoadLevel (Application.loadedLevel);
@@ -265,7 +268,7 @@ public class RCameraControl : MonoBehaviour {
 							Time.timeScale = 1f;
 						}
 						if (GUILayout.Button ("MENU")) {
-							Application.LoadLevel (4);
+							Application.LoadLevel ("Start");
 						}
 						if (GUILayout.Button ("RESTART")) {
 							Application.LoadLevel (Application.loadedLevel);
