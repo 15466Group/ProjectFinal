@@ -9,6 +9,7 @@ public class MasterScheduler : MonoBehaviour {
 	public GameObject sniper;
 
 	private RCameraControl sniperScript;
+	private GoalControl gc;
 
 	public GameObject plane;
 	public float nodeSize;
@@ -33,6 +34,9 @@ public class MasterScheduler : MonoBehaviour {
 
 	private bool gamePaused;//handle pausing in middle of sounds
 	public int alert;
+	private int maxAlert;
+	private int normAlert;
+	private int notAlert;
 
 	private AudioSource lowkeyBGM;
 	private AudioSource hikeyBGM;
@@ -63,7 +67,11 @@ public class MasterScheduler : MonoBehaviour {
 		NB.Starta ();
 		currentlySearching = new List<MasterBehaviour> ();
 		gamePaused = false;
-		alert = 0;
+
+		maxAlert = 2;
+		normAlert = 1;
+		notAlert = 0;
+		alert = notAlert;
 
 		sniperScript = sniper.GetComponent <RCameraControl> ();
 		lowkeyBGM = GetComponents<AudioSource> () [0];
@@ -71,6 +79,8 @@ public class MasterScheduler : MonoBehaviour {
 		lowkeyBGM.volume = 0.7f;
 		hikeyBGM.volume = 0.7f;
 		lowkeyBGM.Play ();
+
+		gc = player.GetComponent<GoalControl> ();
 
 	}
 
@@ -90,7 +100,7 @@ public class MasterScheduler : MonoBehaviour {
 		checkGuardRelationship ();
 
 		if (sniperScript.fired > 0) {
-			alert = 2;
+			alert = maxAlert;
 			if (lowkeyBGM.isPlaying && !hikeyBGM.isPlaying){
 				lowkeyBGM.Stop();
 				hikeyBGM.Play ();
@@ -230,7 +240,7 @@ public class MasterScheduler : MonoBehaviour {
 				mb.seesPlayer = true;
 				mb.seenTime += Time.deltaTime;
 				if (mb.seenTime > 1f) {
-					alert = Mathf.Max (alert, 1);
+					alert = Mathf.Max (alert, normAlert);
 					mb.isShooting = true;
 					//mb.seenTime = 0f;
 				}
@@ -316,7 +326,8 @@ public class MasterScheduler : MonoBehaviour {
 		
 		//seenDeadSet now updated so pass this along to every character because assumed they are now notified of all dead positions
 //		if (updatedDeadSet > 0) {
-		if (alert > 0) {
+		if (alert > notAlert) {
+			gc.enemiesAlerted = true;
 			if (lowkeyBGM.isPlaying && !hikeyBGM.isPlaying){
 				lowkeyBGM.Stop();
 				hikeyBGM.Play ();
@@ -327,7 +338,7 @@ public class MasterScheduler : MonoBehaviour {
 				if (!mb.isDead) {
 					mb.updateDeadSet (seenDeadSet);
 					//fixme
-					if(alert == 2) {
+					if(alert == maxAlert) {
 						mb.updateSniperPos();
 					}
 					mb.needsToRaiseAlertLevel = true;

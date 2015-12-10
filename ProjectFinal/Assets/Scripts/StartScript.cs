@@ -42,6 +42,9 @@ public class StartScript : MonoBehaviour {
 				if (GUILayout.Button ("Mission 1")) {
 					Application.LoadLevel ("Aesthetics 2");
 				}
+				if (GUILayout.Button("Quit")){
+					Application.Quit();
+				}
 			}
 			GUILayout.EndVertical ();
 		}

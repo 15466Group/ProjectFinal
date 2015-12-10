@@ -7,6 +7,7 @@ public class GoalControl : MonoBehaviour {
 	public string walking;
 	public string running;
 	public string dying;
+	public string alertRunning;
 	public float colliderScalar;
 
 	private Animation anim;
@@ -26,13 +27,14 @@ public class GoalControl : MonoBehaviour {
 	public GameObject noiseSphere;
 	private GameObject clonedNoiseSphere;
 	private Material mat;
-	private bool fading;
 	private float startAlpha;
 
 	public bool isDead { get; set; } 
 	private Texture2D healthTex;
 
 	private bool gamePaused;
+
+	public bool enemiesAlerted { get; set; }
 
 	public bool won { get; set; }
 	public GameObject endPoint;
@@ -57,6 +59,7 @@ public class GoalControl : MonoBehaviour {
 		healthTex.Apply();
 		gamePaused = false;
 		won = false;
+		enemiesAlerted = false;
 	}
 
 	void Update()
@@ -128,7 +131,10 @@ public class GoalControl : MonoBehaviour {
 		if (mag > 0.0f && mag <= walkingSpeed) {
 			anim.CrossFade (walking);
 		} else if (mag > walkingSpeed) {
-			anim.CrossFade (running);
+			if (!enemiesAlerted)
+				anim.CrossFade (running);
+			else
+				anim.CrossFade(alertRunning);
 		} else {
 			anim.CrossFade (idle);
 		}
