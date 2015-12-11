@@ -52,7 +52,7 @@ public class RCameraControl : MonoBehaviour {
 		reloadSound = this.GetComponents<AudioSource> () [1];
 		emptyClipSound = this.GetComponents<AudioSource> () [2];
 		wantedMode = CursorLockMode.Locked;
-		sensitivityM = sensitivityMDefault;
+		sensitivityM = 0.5f;
 		fullClipSize = 4;
 		clipSize = fullClipSize;
 		ammo = 8;
