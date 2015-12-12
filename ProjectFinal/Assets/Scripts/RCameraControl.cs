@@ -75,6 +75,9 @@ public class RCameraControl : MonoBehaviour {
 	
 	void Update ()
 	{
+		if (gc == null) {
+			gc = sneaker.GetComponent <GoalControl> ();
+		}
 		if (Time.timeScale == 1f) {
 			rotationX += Input.GetAxis ("Mouse X") * sensitivityM;
 			rotationX = Mathf.Clamp (rotationX, minimumX, maximumX);
@@ -131,19 +134,23 @@ public class RCameraControl : MonoBehaviour {
 				}
 			}
 		}
-
-//		if (Input.GetKeyDown (KeyCode.R))
-//			Application.LoadLevel(Application.loadedLevel);
-
-//		if (Input.GetKeyDown (KeyCode.P)) {
-//			if(Time.timeScale != 0f) {
-//				Time.timeScale = 0f;
-//			}
-//			else {
-//				Time.timeScale = 1f;
-//			}
-//		}
-
+		if ((Input.GetKeyDown (KeyCode.Escape) && !gc.won && !gc.isDead)) {
+			//Cursor.lockState = wantedMode = CursorLockMode.None;
+			//			if(Time.timeScale != 0f) {
+			//				Debug.Log ("game paused");
+			//				Time.timeScale = 0f;
+			//			}
+			//			else {
+			//				Debug.Log ("game unpaused");
+			//				Time.timeScale = 1f;
+			//			}
+			Time.timeScale = 0f;
+		}
+		if ((gc.isDead || gc.won) && Time.timeScale > 0f) {
+			//			Time.timeScale -=(Time.timeScale / 500f);
+			Time.timeScale = Mathf.Min (Time.timeScale, 0.7f);
+			Time.timeScale -= Time.timeScale/500f;
+		}
 	}
 
 	
@@ -167,31 +174,13 @@ public class RCameraControl : MonoBehaviour {
 //		GUI.DrawTexture (new Rect (-tex.width * textureCrop.x, -tex.height * textureCrop.y, tex.width * textureCrop.width, tex.height * textureCrop.height), tex );
 //		GUI.EndGroup ();
 
-		if ((Input.GetKeyDown (KeyCode.Escape) && !gc.won && !gc.isDead)) {
-			//Cursor.lockState = wantedMode = CursorLockMode.None;
-//			if(Time.timeScale != 0f) {
-//				Debug.Log ("game paused");
-//				Time.timeScale = 0f;
-//			}
-//			else {
-//				Debug.Log ("game unpaused");
-//				Time.timeScale = 1f;
-//			}
-			Time.timeScale = 0f;
-		}
-		if ((gc.isDead || gc.won) && Time.timeScale > 0f) {
-//			Time.timeScale -=(Time.timeScale / 500f);
-			Time.timeScale = Mathf.Min (Time.timeScale, 0.7f);
-		}
-
 		if (Time.timeScale < 1f) {
-
+			GUI.skin.box.normal.background = pauseTex;
+			GUI.Box(new Rect(0f, 0f, Screen.width, Screen.height), GUIContent.none);
 			if(gc.won) {
-				GUI.skin.box.normal.background = pauseTex;
-				GUI.Box(new Rect(0f, 0f, Screen.width, Screen.height), GUIContent.none);
-				Time.timeScale -= Time.timeScale/500f;
-				if(Time.timeScale < 0.40f) {
-					
+
+
+				if(Time.timeScale < 0.3f) {
 					Cursor.lockState = wantedMode = CursorLockMode.None;
 					GUILayout.BeginHorizontal ();
 					{
@@ -222,11 +211,8 @@ public class RCameraControl : MonoBehaviour {
 				}
 			}
 			else if (gc.isDead) {
-				GUI.skin.box.normal.background = pauseTex;
-				GUI.Box(new Rect(0f, 0f, Screen.width, Screen.height), GUIContent.none);
 				Time.timeScale -= Time.timeScale/500f;
-				if(Time.timeScale < 0.40f) {
-
+				if(Time.timeScale < 0.30f) {
 					Cursor.lockState = wantedMode = CursorLockMode.None;
 					GUILayout.BeginHorizontal ();
 					{
@@ -269,8 +255,6 @@ public class RCameraControl : MonoBehaviour {
 	//				Application.LoadLevel (Application.loadedLevel);
 	//			}
 	//			GUILayout.EndVertical ();
-				GUI.skin.box.normal.background = pauseTex;
-				GUI.Box(new Rect(0f, 0f, Screen.width, Screen.height), GUIContent.none);
 				Cursor.lockState = wantedMode = CursorLockMode.None;
 				GUILayout.BeginHorizontal ();
 				{

@@ -38,7 +38,6 @@ public class StartScript : MonoBehaviour {
 	}
 
 	void OnGUI() {
-
 		GUI.skin.font = myFont;
 		GUI.skin.button = buttonStyle;
 		GUI.skin.label.normal.background = bTexN;
