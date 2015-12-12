@@ -90,7 +90,7 @@ public class StartScript : MonoBehaviour {
 						if (GUILayout.Button (new GUIContent("Tutorial_2", "Sniper_was_unprepared_and_brought_no_ammo!\nUse_\"Q\"_to_whistle_and_lure_guards_to_your\nlocation."))) {
 							Application.LoadLevel ("Tutorial2");
 						}
-						if (GUILayout.Button (new GUIContent("Tutorial_3", "Provide_cover_with_Sniper!_Use_the_mouse_to\naim,_left_click_to_shoot._Keep_an_eye_on_your\nammo_and_reload_with_right_click!"))) {
+						if (GUILayout.Button (new GUIContent("Tutorial_3", "Provide_cover_with_Sniper!_Use_the_mouse_to\naim,_left_click_to_shoot._Keep_an_eye_on_your\nammo_and_reload_with_right_click!\nBe_careful_though;_once_the_guards\nknow_where_Sniper_is,_they're_sometimes\nscared_to_go_to_whistling_spots!"))) {
 							Application.LoadLevel ("Tutorial3");
 						}
 						GUILayout.Label("", GUILayout.Height (10));

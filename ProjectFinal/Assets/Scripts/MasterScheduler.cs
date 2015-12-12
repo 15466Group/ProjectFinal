@@ -266,7 +266,7 @@ public class MasterScheduler : MonoBehaviour {
 		if (Physics.Raycast (currChar.transform.position, player.transform.position - currChar.transform.position, out hit, sightDist)) {
 			float angle = Vector3.Angle (currChar.transform.forward, player.transform.position - currChar.transform.position);
 			if ((hit.collider.gameObject == player) && ((angle <= playerAngle) || Vector3.Distance (currChar.transform.position, player.transform.position) < 10f)) {
-				if (!mb.seesPlayer && !mb.isGoingToSeenPlayerPos) {
+				if (!mb.seesPlayer && !mb.isGoingToSeenPlayerPos && !gc.isDead) {
 					mb.alert.Play (); //alert is first
 				}
 				mb.lastSeen = player.transform.position;

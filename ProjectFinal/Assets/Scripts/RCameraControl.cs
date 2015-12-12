@@ -59,9 +59,9 @@ public class RCameraControl : MonoBehaviour {
 		sniperGetDown.volume = 0.32f;
 		wantedMode = CursorLockMode.Locked;
 		sensitivityM = 0.5f;
-		fullClipSize = 4;
+		fullClipSize = 3;
 		clipSize = fullClipSize;
-		ammo = 8;
+		ammo = 6;
 		if (string.Compare (Application.loadedLevelName, "Tutorial2") == 0) {
 			ammo = 0;
 			clipSize = 0;
@@ -76,7 +76,7 @@ public class RCameraControl : MonoBehaviour {
 		pauseTex.Apply();
 		fired = 0;
 		firstSniperFired = false;
-		timer = 10f;
+		timer = 120f;
 		timer += 1f;
 	}
 
