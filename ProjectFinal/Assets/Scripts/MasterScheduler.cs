@@ -40,6 +40,7 @@ public class MasterScheduler : MonoBehaviour {
 
 	private AudioSource lowkeyBGM;
 	private AudioSource hikeyBGM;
+	private AudioSource deathSound;
 
 
 	// Use this for initialization
@@ -76,6 +77,7 @@ public class MasterScheduler : MonoBehaviour {
 		sniperScript = sniper.GetComponent <RCameraControl> ();
 		lowkeyBGM = GetComponents<AudioSource> () [0];
 		hikeyBGM = GetComponents<AudioSource> () [1];
+		deathSound = GetComponents<AudioSource> () [2];
 		lowkeyBGM.volume = 0.7f;
 		hikeyBGM.volume = 0.7f;
 		lowkeyBGM.Play ();
@@ -107,9 +109,11 @@ public class MasterScheduler : MonoBehaviour {
 			}
 		}
 
-		if (gc.isDead) {
+		if (gc.isDead && !deathSound.isPlaying) {
 			lowkeyBGM.Stop ();
 			hikeyBGM.Stop ();
+			if(Time.timeScale < 0.6f)
+				deathSound.Play();
 		}
 		if (gc.won) {
 			lowkeyBGM.Stop ();

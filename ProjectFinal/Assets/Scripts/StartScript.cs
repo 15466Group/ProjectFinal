@@ -21,8 +21,7 @@ public class StartScript : MonoBehaviour {
 		buttonStyle.hover.background = bTexH;
 		//buttonStyle.onHover.textColor = Color.black;
 		buttonStyle.hover.textColor = Color.black;
-		
-		
+
 		buttonStyle.normal.background = bTexN;
 		buttonStyle.normal.textColor = Color.white;
 		buttonStyle.stretchWidth = false;
@@ -78,7 +77,7 @@ public class StartScript : MonoBehaviour {
 					GUILayout.Label ("SNIPER");
 				}
 				GUILayout.EndHorizontal ();
-				GUILayout.Label ("", GUILayout.Height (Screen.height/10));
+				GUILayout.Label ("", GUILayout.Height (Screen.height/20));
 
 
 				if (GUILayout.Button ("Tutorial_1")) {
@@ -91,9 +90,14 @@ public class StartScript : MonoBehaviour {
 				if (GUILayout.Button ("Tutorial_3")) {
 					Application.LoadLevel ("Tutorial3");
 				}
+				GUILayout.Label("", GUILayout.Height (10));
 				if (GUILayout.Button ("Mission_1")) {
 					Application.LoadLevel ("Aesthetics 2");
 				}
+				if (GUILayout.Button ("Mission_2")) {
+					Application.LoadLevel ("Aesthetics 3");
+				}
+				GUILayout.Label("", GUILayout.Height (10));
 				if (GUILayout.Button("Quit")){
 					Application.Quit();
 				}
