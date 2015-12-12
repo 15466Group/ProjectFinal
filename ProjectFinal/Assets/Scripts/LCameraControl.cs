@@ -21,7 +21,6 @@ public class LCameraControl : MonoBehaviour {
 		float w = (float)Screen.width;
 		float h = (float)Screen.height;
 		ratio = w / h;
-		Debug.Log ("RATIO" + ratio);
 		this.GetComponent <Camera> ().fieldOfView = (21f) * (-1f) * ratio + 76f; 
 	}
 }

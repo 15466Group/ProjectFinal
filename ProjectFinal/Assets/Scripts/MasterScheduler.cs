@@ -182,8 +182,15 @@ public class MasterScheduler : MonoBehaviour {
 	//sometimes player whistles and npc hears it
 	void checkIfNearHeardNoise(GameObject currChar, MasterBehaviour mb){
 		if (mb.isGoingToHeardPos) {
+			Debug.Log ("leaving nowww");
 			if (Vector3.Distance(currChar.transform.position, mb.poi) < nodeSize){
 				mb.isGoingToHeardPos = false;
+				Debug.Log("too close");
+			} else {
+				Debug.Log ("kk omw");
+				mb.takingCover = false;
+				mb.isGoaling = true;
+				mb.reachedCover = false;
 			}
 		}
 	}
@@ -214,7 +221,7 @@ public class MasterScheduler : MonoBehaviour {
 		if (mb.knowsOfSniper ()) {
 			if (!mb.seesPlayer)
 				mb.takingCover = true;
-			if (!mb.isGoingToSeenPlayerPos && (!mb.reachedCover || sniperScript.firstSniperFired)) {
+			if (!mb.isGoingToSeenPlayerPos && !mb.isGoingToHeardPos && (!mb.reachedCover || sniperScript.firstSniperFired)) {
 				//going to cover
 				mb.poi = mb.takeCover.coverPoint (currChar.transform.position);
 				mb.isGoaling = true;
@@ -356,7 +363,7 @@ public class MasterScheduler : MonoBehaviour {
 				if (!mb.isDead) {
 					mb.updateDeadSet (seenDeadSet);
 					//fixme
-					if(alert == maxAlert) {
+					if(alert == maxAlert && !mb.sniperPosKnown) {
 						mb.updateSniperPos();
 					}
 					mb.needsToRaiseAlertLevel = true;

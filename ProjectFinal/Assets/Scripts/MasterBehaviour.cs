@@ -14,6 +14,7 @@ public class MasterBehaviour : MonoBehaviour {
 	private List<Vector3> deadPeopleSeen;
 
 	public bool isGoingToHeardPos { get; set; }
+	private float leaveCoverProb;
 	public bool isDead { get; set; }
 	public bool addToDeadSet { get; set; }
 	public bool isShooting { get; set; }
@@ -24,6 +25,7 @@ public class MasterBehaviour : MonoBehaviour {
 	public int maxAlertLevel { get; set; }
 	public bool needsToRaiseAlertLevel { get; set; }
 	public bool takingCover { get; set; }
+	private float exploreWhileSniperOut;
 	public Vector3 coverSpot { get; set; }
 	public bool reachedCover { get; set; }
 	public bool isReloading { get; set; }
@@ -67,8 +69,7 @@ public class MasterBehaviour : MonoBehaviour {
 	public AudioSource alert;
 
 	private gun gunThingy;
-	float fireCycle;
-
+	private float fireCycle;
 
 	// Use this for initialization
 	public void Starta (GameObject plane, float nodeSize, Vector3 sP) {
@@ -130,6 +131,8 @@ public class MasterBehaviour : MonoBehaviour {
 		gunShot.volume = 0.3f;
 		alert.volume = 0.6f;
 		wanderDir = 0;
+		leaveCoverProb = 0.33f;
+		exploreWhileSniperOut = 0.001f;
 	}
 
 	public void Updatea(){
@@ -173,9 +176,16 @@ public class MasterBehaviour : MonoBehaviour {
 			if (takingCover && dirSearchCountDown <= 0) {
 				//donothing;
 				wanderDir = 0;
-				standstill.Updatea ();
-				velocity = standstill.velocity;
-			}
+				float prob = Random.Range(0f, 1f);
+				if (prob > exploreWhileSniperOut){
+					standstill.Updatea ();
+					velocity = standstill.velocity;
+					disturbed = false;
+				} else {
+					dirSearchCountDown = 5f;
+					disturbed = true;
+				}
+			} 
 			else if(disturbed) {
 				if(wanderDir == -1 && dirSearchCountDown > 0f) {
 					float tempT = Mathf.Acos (lastSeenForward.x);
@@ -202,6 +212,7 @@ public class MasterBehaviour : MonoBehaviour {
 					}
 					wander.minT = tempT - Mathf.PI/4f;
 					wander.maxT = tempT + Mathf.PI/4f;
+					dirSearchCountDown -= Time.deltaTime;
 				}
 				wander.Updatea();
 				velocity = wander.velocity;
@@ -324,10 +335,21 @@ public class MasterBehaviour : MonoBehaviour {
 	}
 
 	public void hearsNoise(Vector3 pos){
+		Debug.Log ("hears");
 		if (!seesPlayer){
+			if (!knowsOfSniper()){
 			//what to do if in cover and what to do if knowsOfSniper and what to do if seesSniper, probability stuff?
-			isGoingToHeardPos = true;
-			poi = pos;
+				isGoingToHeardPos = true;
+				poi = pos;
+			} else {
+				float prob = Random.Range(0f, 1f);
+				Debug.Log ("prob: " + prob);
+				if (prob <= leaveCoverProb){
+					Debug.Log ("gonna check out sound");
+					isGoingToHeardPos = true;
+					poi = pos;
+				}
+			}
 		}
 	}
 }
