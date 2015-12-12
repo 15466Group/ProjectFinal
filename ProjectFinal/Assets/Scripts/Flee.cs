@@ -25,7 +25,7 @@ public class Flee : NPCBehaviour {
 
 	protected override Vector3 obstacleAvoidance (float radius, Collider[] hits)
 	{
-		Vector3 accel =  base.obstacleAvoidance (radius, hits);
+		Vector3 accel =  base.obstacleAvoidance (radius, hits); //gotta go backwards
 		return (-1.0f) * accel;
 	}
 
