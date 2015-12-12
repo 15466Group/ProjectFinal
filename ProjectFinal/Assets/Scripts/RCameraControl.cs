@@ -167,7 +167,7 @@ public class RCameraControl : MonoBehaviour {
 //		GUI.DrawTexture (new Rect (-tex.width * textureCrop.x, -tex.height * textureCrop.y, tex.width * textureCrop.width, tex.height * textureCrop.height), tex );
 //		GUI.EndGroup ();
 
-		if (Input.GetKeyDown (KeyCode.Escape) || gc.won) {
+		if ((Input.GetKeyDown (KeyCode.Escape) && !gc.won && !gc.isDead)) {
 			//Cursor.lockState = wantedMode = CursorLockMode.None;
 //			if(Time.timeScale != 0f) {
 //				Debug.Log ("game paused");
@@ -179,7 +179,7 @@ public class RCameraControl : MonoBehaviour {
 //			}
 			Time.timeScale = 0f;
 		}
-		if (gc.isDead && Time.timeScale > 0f) {
+		if ((gc.isDead || gc.won) && Time.timeScale > 0f) {
 //			Time.timeScale -=(Time.timeScale / 500f);
 			Time.timeScale = Mathf.Min (Time.timeScale, 0.7f);
 		}
@@ -189,39 +189,44 @@ public class RCameraControl : MonoBehaviour {
 			if(gc.won) {
 				GUI.skin.box.normal.background = pauseTex;
 				GUI.Box(new Rect(0f, 0f, Screen.width, Screen.height), GUIContent.none);
-				Cursor.lockState = wantedMode = CursorLockMode.None;
-				GUILayout.BeginHorizontal ();
-				{
-					GUILayout.BeginVertical (GUILayout.Width (Screen.width/3));
-					{
-						GUILayout.Label ("");
-					}
-					GUILayout.EndVertical ();
+				Time.timeScale -= Time.timeScale/500f;
+				if(Time.timeScale < 0.40f) {
 					
-					GUILayout.BeginVertical (GUILayout.Width (Screen.width/3));
+					Cursor.lockState = wantedMode = CursorLockMode.None;
+					GUILayout.BeginHorizontal ();
 					{
-						GUILayout.BeginVertical ();
+						GUILayout.BeginVertical (GUILayout.Width (Screen.width/3));
 						{
-							GUILayout.Label ("", GUILayout.Height (Screen.height/3));
+							GUILayout.Label ("");
 						}
 						GUILayout.EndVertical ();
-						GUILayout.Label ("YOU WON");
-						if (GUILayout.Button ("MENU")) {
-							Application.LoadLevel ("Start");
+						
+						GUILayout.BeginVertical (GUILayout.Width (Screen.width/3));
+						{
+							GUILayout.BeginVertical ();
+							{
+								GUILayout.Label ("", GUILayout.Height (Screen.height/3));
+							}
+							GUILayout.EndVertical ();
+							GUILayout.Label ("YOU WON");
+							if (GUILayout.Button ("MENU")) {
+								Application.LoadLevel ("Start");
+							}
+							if (GUILayout.Button ("RESTART")) {
+								Application.LoadLevel (Application.loadedLevel);
+							}
 						}
-						if (GUILayout.Button ("RESTART")) {
-							Application.LoadLevel (Application.loadedLevel);
-						}
+						GUILayout.EndVertical ();
 					}
-					GUILayout.EndVertical ();
+					GUILayout.EndHorizontal ();
 				}
-				GUILayout.EndHorizontal ();
 			}
 			else if (gc.isDead) {
+				GUI.skin.box.normal.background = pauseTex;
+				GUI.Box(new Rect(0f, 0f, Screen.width, Screen.height), GUIContent.none);
 				Time.timeScale -= Time.timeScale/500f;
-				if(Time.timeScale < 0.10f) {
-					GUI.skin.box.normal.background = pauseTex;
-					GUI.Box(new Rect(0f, 0f, Screen.width, Screen.height), GUIContent.none);
+				if(Time.timeScale < 0.40f) {
+
 					Cursor.lockState = wantedMode = CursorLockMode.None;
 					GUILayout.BeginHorizontal ();
 					{

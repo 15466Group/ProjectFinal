@@ -107,6 +107,15 @@ public class MasterScheduler : MonoBehaviour {
 			}
 		}
 
+		if (gc.isDead) {
+			lowkeyBGM.Stop ();
+			hikeyBGM.Stop ();
+		}
+		if (gc.won) {
+			lowkeyBGM.Stop ();
+			hikeyBGM.Stop ();
+		}
+
 
 
 		//update guard status and check relationship between player and handle pathfinding
