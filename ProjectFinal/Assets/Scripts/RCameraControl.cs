@@ -403,10 +403,10 @@ public class RCameraControl : MonoBehaviour {
 		Rect rect = new Rect(w - 54, h - 38, 54, 40);
 		style.alignment = TextAnchor.LowerRight;
 		style.fontSize = h * 5 / 100;
-		style.normal.background = new Texture2D(1, 1);
-		style.normal.background.SetPixel(0,0,Color.white);
-		style.normal.background.Apply ();
-		style.normal.textColor = Color.black;
+//		style.normal.background = new Texture2D(1, 1);
+//		style.normal.background.SetPixel(0,0,Color.white);
+//		style.normal.background.Apply ();
+		style.normal.textColor = Color.white;
 		string text = clipSize.ToString() + "/" + reserveSize.ToString();
 		GUI.Label(rect, text, style);
 	}
