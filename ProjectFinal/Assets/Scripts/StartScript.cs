@@ -42,6 +42,7 @@ public class StartScript : MonoBehaviour {
 		GUI.skin.button = buttonStyle;
 		GUI.skin.label.normal.background = bTexN;
 		GUI.skin.label.wordWrap = true;
+		GUI.skin.label.stretchWidth = false;
 		//GUI.contentColor = Color.black;
 		GUILayout.BeginHorizontal ();
 		{
@@ -83,7 +84,7 @@ public class StartScript : MonoBehaviour {
 				{
 					GUILayout.BeginVertical ();
 					{
-						if (GUILayout.Button (new GUIContent("Tutorial_1", "Move_the_Sneaker_to_the_green_gem_using_WASD!"))) {
+						if (GUILayout.Button (new GUIContent("Tutorial_1", "Move_the_Sneaker_to_the_green_gem_using_WASD!\nMake_it_quick!"))) {
 							Application.LoadLevel ("Tutorial1");
 						}
 						if (GUILayout.Button (new GUIContent("Tutorial_2", "Sniper_was_unprepared_and_brought_no_ammo!\nUse_\"Q\"_to_whistle_and_lure_guards_to_your\nlocation."))) {

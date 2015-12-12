@@ -26,6 +26,7 @@ public class RCameraControl : MonoBehaviour {
 	private AudioSource gunShot;
 	private AudioSource reloadSound;
 	private AudioSource emptyClipSound;
+	private AudioSource sniperGetDown;
 	private int ammo;
 	private bool reloading;
 	private int fullClipSize;
@@ -42,16 +43,20 @@ public class RCameraControl : MonoBehaviour {
 
 	public int fired { get; set; }
 	public bool firstSniperFired { get; set; }
+	private float timer;
 
 	void Start ()
 	{
 		rotationY = 0.0f;
 		rotationX = 0.0f;
 		FOV = 90.0f;
-		gunShot = this.GetComponents<AudioSource> ()[0];
+		AudioSource[] A = this.GetComponents<AudioSource> ();
+		gunShot = A[0];
 		gunShot.volume = 0.6f;
-		reloadSound = this.GetComponents<AudioSource> () [1];
-		emptyClipSound = this.GetComponents<AudioSource> () [2];
+		reloadSound =  A[1];
+		emptyClipSound = A[2];
+		sniperGetDown = A[3];
+		sniperGetDown.volume = 0.32f;
 		wantedMode = CursorLockMode.Locked;
 		sensitivityM = 0.5f;
 		fullClipSize = 4;
@@ -71,6 +76,8 @@ public class RCameraControl : MonoBehaviour {
 		pauseTex.Apply();
 		fired = 0;
 		firstSniperFired = false;
+		timer = 10f;
+		timer += 1f;
 	}
 
 	
@@ -112,8 +119,10 @@ public class RCameraControl : MonoBehaviour {
 					}
 					gunShot.Play ();
 					fired++;
-					if (fired == 1)
+					if (fired == 1){
 						firstSniperFired = true;
+						sniperGetDown.Play ();
+					}
 					else
 						firstSniperFired = false;
 					clipSize -= 1;
@@ -135,7 +144,7 @@ public class RCameraControl : MonoBehaviour {
 				}
 			}
 		}
-		if ((Input.GetKeyDown (KeyCode.Escape) && !gc.won && !gc.isDead)) {
+		if ((Input.GetKeyDown (KeyCode.Escape) && !gc.won && !gc.isDead) || gc.won) {
 			//Cursor.lockState = wantedMode = CursorLockMode.None;
 			//			if(Time.timeScale != 0f) {
 			//				Debug.Log ("game paused");
@@ -147,10 +156,14 @@ public class RCameraControl : MonoBehaviour {
 			//			}
 			Time.timeScale = 0f;
 		}
-		if ((gc.isDead || gc.won) && Time.timeScale > 0f) {
+		if (gc.isDead && Time.timeScale > 0f) {
 			//			Time.timeScale -=(Time.timeScale / 500f);
 			Time.timeScale = Mathf.Min (Time.timeScale, 0.7f);
 			Time.timeScale -= Time.timeScale/500f;
+		}
+		timer = Mathf.Max (0f, timer - Time.deltaTime);
+		if (timer <= 0f) {
+			gc.die();
 		}
 	}
 
@@ -343,6 +356,24 @@ public class RCameraControl : MonoBehaviour {
 
 		showReloadHelper ();
 
+		showTimer();
+
+	}
+
+	void showTimer(){
+		string text;
+		int intTime = Mathf.RoundToInt (timer);
+		text = intTime.ToString ();
+
+		int w = Screen.width, h = Screen.height;
+		
+		GUIStyle style = new GUIStyle();
+		
+		Rect rect = new Rect(0, 0, w, h);
+		style.alignment = TextAnchor.UpperCenter;
+		style.fontSize = h * 5 / 100;
+		style.normal.textColor = Color.red;
+		GUI.Label(rect, text, style);
 	}
 
 	void showReloadHelper(){
