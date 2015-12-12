@@ -162,7 +162,7 @@ public class RCameraControl : MonoBehaviour {
 			Time.timeScale -= Time.timeScale/500f;
 		}
 		timer = Mathf.Max (0f, timer - Time.deltaTime);
-		if (timer <= 0f) {
+		if (timer <= 0f && !gc.isDead) {
 			gc.die();
 		}
 	}
@@ -380,9 +380,9 @@ public class RCameraControl : MonoBehaviour {
 		string text;
 		if (clipSize == 0){
 			if (ammo > 0)
-				text = "Right Click to Reload!";
+				text = "Right_Click_to_Reload!";
 			else
-				text = "Out of Ammo!";
+				text = "Out_of_Ammo!";
 			int w = Screen.width, h = Screen.height;
 			
 			GUIStyle style = new GUIStyle();
