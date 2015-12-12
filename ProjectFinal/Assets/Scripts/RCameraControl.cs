@@ -49,6 +49,7 @@ public class RCameraControl : MonoBehaviour {
 		rotationX = 0.0f;
 		FOV = 90.0f;
 		gunShot = this.GetComponents<AudioSource> ()[0];
+		gunShot.volume = 0.6f;
 		reloadSound = this.GetComponents<AudioSource> () [1];
 		emptyClipSound = this.GetComponents<AudioSource> () [2];
 		wantedMode = CursorLockMode.Locked;
@@ -180,7 +181,7 @@ public class RCameraControl : MonoBehaviour {
 			if(gc.won) {
 
 
-				if(Time.timeScale < 0.3f) {
+				if(Time.timeScale < 0.6f) {
 					Cursor.lockState = wantedMode = CursorLockMode.None;
 					GUILayout.BeginHorizontal ();
 					{
@@ -211,8 +212,7 @@ public class RCameraControl : MonoBehaviour {
 				}
 			}
 			else if (gc.isDead) {
-				Time.timeScale -= Time.timeScale/500f;
-				if(Time.timeScale < 0.30f) {
+				if(Time.timeScale < 0.5f) {
 					Cursor.lockState = wantedMode = CursorLockMode.None;
 					GUILayout.BeginHorizontal ();
 					{

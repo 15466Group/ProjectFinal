@@ -41,6 +41,9 @@ public class MasterScheduler : MonoBehaviour {
 	private AudioSource lowkeyBGM;
 	private AudioSource hikeyBGM;
 	private AudioSource deathSound;
+	private AudioSource winSound;
+	private bool deathPlayed;
+	private bool winPlayed;
 
 
 	// Use this for initialization
@@ -78,11 +81,15 @@ public class MasterScheduler : MonoBehaviour {
 		lowkeyBGM = GetComponents<AudioSource> () [0];
 		hikeyBGM = GetComponents<AudioSource> () [1];
 		deathSound = GetComponents<AudioSource> () [2];
+		winSound = GetComponents<AudioSource> () [3];
 		lowkeyBGM.volume = 0.7f;
 		hikeyBGM.volume = 0.7f;
 		lowkeyBGM.Play ();
 
 		gc = player.GetComponent<GoalControl> ();
+
+		deathPlayed = false;
+		winPlayed = false;
 
 	}
 
@@ -109,15 +116,22 @@ public class MasterScheduler : MonoBehaviour {
 			}
 		}
 
-		if (gc.isDead && !deathSound.isPlaying) {
+		if (gc.isDead && !deathSound.isPlaying && !deathPlayed) {
 			lowkeyBGM.Stop ();
 			hikeyBGM.Stop ();
-			if(Time.timeScale < 0.6f)
+			if(Time.timeScale < 0.6f) {
 				deathSound.Play();
+				deathPlayed = true;
+			}
 		}
-		if (gc.won) {
+		if (gc.won && !winSound.isPlaying && !winPlayed) {
 			lowkeyBGM.Stop ();
 			hikeyBGM.Stop ();
+			if(Time.timeScale < 0.6f) {
+				winSound.volume = 0.65f;
+				winSound.Play();
+				winPlayed = true;
+			}
 		}
 
 
