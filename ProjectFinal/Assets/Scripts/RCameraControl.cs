@@ -225,7 +225,7 @@ public class RCameraControl : MonoBehaviour {
 				}
 			}
 			else if (gc.isDead) {
-				if(Time.timeScale < 0.5f) {
+				if(Time.timeScale < 0.6f) {
 					Cursor.lockState = wantedMode = CursorLockMode.None;
 					GUILayout.BeginHorizontal ();
 					{

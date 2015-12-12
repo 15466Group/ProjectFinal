@@ -119,7 +119,7 @@ public class MasterScheduler : MonoBehaviour {
 		if (gc.isDead && !deathSound.isPlaying && !deathPlayed) {
 			lowkeyBGM.Stop ();
 			hikeyBGM.Stop ();
-			if(Time.timeScale < 0.6f) {
+			if(Time.timeScale < 0.67f) {
 				deathSound.Play();
 				deathPlayed = true;
 			}
