@@ -33,6 +33,11 @@ public class NPCBehaviour : MonoBehaviour {
 	protected bool isWanderer { get; set; }
 	protected bool isReachingGoal { get; set; }
 	protected bool inArrivalRadius { get; set; }
+
+	protected Vector3 previousValidPos { get; set; }
+	protected int obstacleLayer { get; set; }
+	protected int deadLayer { get; set; }
+	protected int goalLayer { get; set; }
 	
 
 	// Use this for initialization
@@ -53,6 +58,10 @@ public class NPCBehaviour : MonoBehaviour {
 		charWeight = 1.0f;
 		accMag = accMagDefault;
 		speedMax = speedMaxDefault;
+		previousValidPos = transform.position;
+		obstacleLayer = 1 << (LayerMask.NameToLayer("Obstacles"));
+		goalLayer = 1 << (LayerMask.NameToLayer("Goal"));
+		deadLayer = 1 << (LayerMask.NameToLayer("Goal"));
 //		anim = GetComponent<Animation> ();
 //		anim.CrossFade (idle);
 	}
@@ -107,9 +116,9 @@ public class NPCBehaviour : MonoBehaviour {
 	//even if something isn't directly in front of the character, should still avoid it if it's too close
 	//cus he cant turn instantaneously
 	Vector3 checkCloseCalls(Vector3 accel) {
-		Collider[] hits = Physics.OverlapSphere (transform.position, closeRayDist);
+		Collider[] hits = Physics.OverlapSphere (transform.position, closeRayDist, obstacleLayer | goalLayer | deadLayer);
 		//don't include hitting self
-		if (hits.Length > 1) {
+		if (hits.Length > 0) {
 			Vector3 accumulator = obstacleAvoidance(closeRayDist, hits);
 			return accumulator.normalized * accMag;
 		} else {
@@ -132,7 +141,7 @@ public class NPCBehaviour : MonoBehaviour {
 		
 //		Debug.DrawRay(transform.position,transform.forward * 50.0f,Color.red);
 		if (hitRight || hitLeft) {
-			Collider[] hits = Physics.OverlapSphere(transform.position, rayDist);
+			Collider[] hits = Physics.OverlapSphere(transform.position, rayDist, obstacleLayer | goalLayer | deadLayer);
 			Vector3 accumulator = obstacleAvoidance(rayDist, hits);
 			accumulator += transform.forward.normalized;
 			return checkCloseCalls(accumulator.normalized * accMag);
