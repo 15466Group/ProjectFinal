@@ -102,10 +102,10 @@ public class RCameraControl : MonoBehaviour {
 
 			//FIRE
 			if (Input.GetMouseButtonDown (0)){
-				if (clipSize == 0 && !gunShot.isPlaying && !reloadSound.isPlaying && !emptyClipSound.isPlaying){
+				if (clipSize == 0 && !gunShot.isPlaying && !reloadSound.isPlaying && !reloading && !emptyClipSound.isPlaying){
 					emptyClipSound.Play();
 				}
-				else if (!gunShot.isPlaying && clipSize > 0 && !reloadSound.isPlaying) {
+				else if (!gunShot.isPlaying && clipSize > 0 && !reloadSound.isPlaying && !reloading) {
 					RaycastHit hit;
 					if (Physics.Raycast (transform.position, transform.forward, out hit)) {
 						if (hit.collider.tag == "Soldier") {
@@ -138,7 +138,7 @@ public class RCameraControl : MonoBehaviour {
 
 			if (reloading) {
 				if (!reloadSound.isPlaying) {
-					clipSize = Mathf.Min (reserveSize, fullClipSize);
+					clipSize = Mathf.Min (reserveSize + clipSize, fullClipSize);
 					reserveSize = ammo - clipSize;
 					reloading = false;
 				}
